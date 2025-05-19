@@ -406,43 +406,48 @@ function validarEEnviar() {
 
     console.log('Dados do deslocamento:', dadosDeslocamento);
 
-    // Simular um envio para API
-    try {
-        // Simulação de envio com mensagem de sucesso
-        setTimeout(() => {
+    // Iniciar o indicador de carregamento
+    document.getElementById('btnEnviar').disabled = true;
+    document.getElementById('btnEnviar').textContent = 'Enviando...';
+
+    // Enviar dados para o servidor
+    fetch('http://localhost:3000/api/deslocamentos', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': getUserId()
+        },
+        body: JSON.stringify(dadosDeslocamento)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Erro na resposta do servidor');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.sucesso) {
             mostrarMensagem('sucesso', 'Registro Concluído', 'Deslocamento registrado com sucesso!');
             resetForm();
-        }, 500);
-        
-        // Código real para envio ao servidor (comentado)
-        /*
-        fetch('http://localhost:3000/api/deslocamentos', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': getUserId()
-            },
-            body: JSON.stringify(dadosDeslocamento)
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Erro na resposta do servidor');
-            }
-            return response.json();
-        })
-        .then(data => {
-            mostrarMensagem('sucesso', 'Registro Concluído', 'Deslocamento registrado com sucesso!');
-            resetForm();
-        })
-        .catch(error => {
-            console.error('Erro:', error);
-            mostrarMensagem('erro', 'Erro no Sistema', 'Erro ao tentar registrar o deslocamento. Tente novamente mais tarde.');
-        });
-        */
-    } catch (error) {
+        } else {
+            mostrarMensagem('erro', 'Erro no Sistema', data.mensagem || 'Erro ao tentar registrar o deslocamento.');
+        }
+    })
+    .catch(error => {
         console.error('Erro:', error);
         mostrarMensagem('erro', 'Erro no Sistema', 'Erro ao tentar registrar o deslocamento. Tente novamente mais tarde.');
-    }
+    })
+    .finally(() => {
+        // Restaurar o botão de envio
+        document.getElementById('btnEnviar').disabled = false;
+        document.getElementById('btnEnviar').innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+            Enviar Formulário
+        `;
+    });
 }
 
 // Função para obter o ID de um cliente ou local pelo nome

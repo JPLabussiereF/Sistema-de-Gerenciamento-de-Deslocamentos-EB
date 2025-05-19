@@ -122,6 +122,7 @@ async function fetchOpcoesAutocomplete() {
 }
 
 // Função para configurar autocomplete em um campo
+// Função modificada para configurar autocomplete em um campo
 function setupAutocomplete(fieldId, options) {
     const inputField = document.getElementById(fieldId);
     const dropdownList = document.getElementById(fieldId + 'Dropdown');
@@ -142,16 +143,36 @@ function setupAutocomplete(fieldId, options) {
         
         // Criar e adicionar itens filtrados ao dropdown
         filteredOptions.forEach(option => {
+            // Criar container para o item (para organizar nome e endereço)
             const item = document.createElement('div');
             item.className = 'dropdown-item';
-            item.textContent = option;
             
-            // Adicionar título para exibir o endereço completo (se disponível)
-            if (fieldId === 'cliente' || fieldId === 'origem' || fieldId === 'destino') {
-                const dadoCompleto = getEnderecoCompleto(option);
-                if (dadoCompleto) {
-                    item.title = dadoCompleto;
-                }
+            // Obter o endereço completo (se disponível)
+            const enderecoCompleto = getEnderecoCompleto(option);
+            
+            // Sempre criar um span para o nome (garantindo formatação consistente)
+            const nomeSpan = document.createElement('span');
+            nomeSpan.className = 'dropdown-item-nome';
+            nomeSpan.textContent = option;
+            item.appendChild(nomeSpan);
+            
+            // Se tiver endereço, adicionar essa informação também
+            if (enderecoCompleto) {
+                // Criar span para o endereço (texto menor e cinza)
+                const enderecoSpan = document.createElement('span');
+                enderecoSpan.className = 'dropdown-item-endereco';
+                enderecoSpan.textContent = enderecoCompleto;
+                item.appendChild(enderecoSpan);
+                
+                // Adicionar título para mostrar o endereço completo em tooltip também
+                item.title = `${option}: ${enderecoCompleto}`;
+            } else if (option === 'Sem cliente') {
+                // Para "Sem cliente", adicionamos um texto explicativo como se fosse um endereço
+                const placeHolderSpan = document.createElement('span');
+                placeHolderSpan.className = 'dropdown-item-endereco';
+                placeHolderSpan.textContent = 'Opte por esta alternativa caso a realização da ação \'Visita\' não ocorra.';
+                placeHolderSpan.style.opacity = '0.7'; // Tornar visível mas sutil
+                item.appendChild(placeHolderSpan);
             }
             
             item.addEventListener('click', function() {
@@ -177,6 +198,7 @@ function setupAutocomplete(fieldId, options) {
         }
     }
     
+    // O restante da função permanece igual
     // Mostrar todas as opções ao clicar no campo
     inputField.addEventListener('click', function() {
         showDropdown();

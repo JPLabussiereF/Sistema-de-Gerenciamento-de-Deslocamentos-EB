@@ -191,36 +191,61 @@ input[type="number"]::-webkit-inner-spin-button {
     margin: 0;
 }
 
-/* Estilização para o campo de autocomplete */
-.autocomplete-container {
-    position: relative;
-    width: 100%;
-}
-
+/* Atualização do estilo do dropdown */
 .dropdown-list {
-    display: none;
     position: absolute;
+    top: 100%;
+    left: 0;
     width: 100%;
     max-height: 200px;
     overflow-y: auto;
     background-color: var(--branco);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-radius: 4px;
-    z-index: 10;
-    margin-top: 2px;
     border: 1px solid var(--cinza-medio);
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: none;
 }
 
+/* Item do dropdown */
 .dropdown-item {
     padding: 10px 12px;
     cursor: pointer;
+    border-bottom: 1px solid var(--cinza-claro);
+    display: flex;
+    flex-direction: column;
     transition: background-color 0.2s;
-    font-size: 14px;
 }
 
 .dropdown-item:hover {
-    background-color: var(--cinza-claro);
+    background-color: var(--cinza-medio);
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item-nome {
+    font-weight: 500;
     color: var(--azul-royal);
+    margin-bottom: 3px;
+    display: block; /* Garantir que todos os itens tenham a mesma estrutura */
+}
+
+.dropdown-item-endereco {
+    font-size: 0.85em;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    min-height: 1.2em; /* Garantir altura mínima mesmo quando não há conteúdo */
+    display: block; /* Garantir que a estrutura se mantenha */
+}
+
+.autocomplete-container {
+    position: relative;
+    width: 100%;
 }
 
 /* Destacando o campo "Ação do Trajeto" */

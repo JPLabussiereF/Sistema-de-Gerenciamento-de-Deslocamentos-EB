@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Cliente - Elétrica Bahiana</title>
+    <link rel="stylesheet" href="../styles/cadastro-cliente.css">
+    <link rel="shortcut icon" href="../images/logotipo_eb_branco.svg" type="image/png">
+</head>
+<body>
+    <div class="header">
+        <div class="logo-container">
+            <img src="../images/logo.png" alt="EB" class="logo-image">
+        </div>
+    </div>
+    
+    <div class="form-container">
+        <div class="form-card">
+            <h2 class="form-title">Cadastro de Cliente</h2>
+            
+            <!-- Dados do Cliente -->
+            <div class="section-title">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>Dados do Cliente</span>
+            </div>
+            
+            <!-- Campo Nome do Cliente -->
+            <div class="input-group">
+                <div class="input-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+                <div class="field-label">Nome do Cliente</div>
+                <input type="text" class="form-input" id="nomeCliente" placeholder=" " autocomplete="off">
+                <div class="form-border"></div>
+            </div>
+            
+            <!-- Campo CPF/CNPJ -->
+            <div class="input-group">
+                <div class="input-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <path d="M16 2v4"></path>
+                        <path d="M8 2v4"></path>
+                        <path d="M3 10h18"></path>
+                    </svg>
+                </div>
+                <div class="field-label">CPF/CNPJ</div>
+                <input type="text" class="form-input" id="cpfCnpj" placeholder=" " autocomplete="off">
+                <div class="form-border"></div>
+            </div>
+            
+            <!-- Campo Responsável -->
+            <div class="input-group">
+                <div class="input-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                </div>
+                <div class="field-label">Nome do Vendedor Externo Responsável</div>
+                <input type="text" class="form-input" id="responsavel" placeholder=" " autocomplete="off">
+                <div class="form-border"></div>
+            </div>
+
+            <!-- Informações de Endereço -->
+            <div class="section-title">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                <span>Endereço Completo</span>
+            </div>
+
+            <!-- Campo CEP -->
+            <div class="input-group">
+                <div class="input-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                </div>
+                <div class="field-label">CEP</div>
+                <input type="text" class="form-input" id="cep" placeholder=" " autocomplete="off" maxlength="9">
+                <div class="form-border"></div>
+            </div>
+            
+            <!-- Campos de Cidade e Estado -->
+            <div class="input-row">
+                <div class="input-group">
+                    <div class="input-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"></path>
+                        </svg>
+                    </div>
+                    <div class="field-label">Cidade</div>
+                    <input type="text" class="form-input" id="cidade" placeholder=" " autocomplete="off">
+                    <div class="form-border"></div>
+                </div>
+                
+                <div class="input-group">
+                    <div class="input-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                        </svg>
+                    </div>
+                    <div class="field-label">Estado</div>
+                    <select class="form-input" id="estado" placeholder=" ">
+                        <option value=""></option>
+                        <option value="SE">BA</option>
+                        <option value="TO">SE</option>
+                    </select>
+                    <div class="form-border"></div> 
+                </div>
+            </div>
+            
+            <!-- Campo Bairro -->
+            <div class="input-group">
+                <div class="input-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"></path>
+                    </svg>
+                </div>
+                <div class="field-label">Bairro</div>
+                <input type="text" class="form-input" id="bairro" placeholder=" " autocomplete="off">
+                <div class="form-border"></div>
+            </div>
+            
+            <!-- Campo Rua -->
+            <div class="input-group">
+                <div class="input-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
+                        <path d="M3 6h18"></path>
+                    </svg>
+                </div>
+                <div class="field-label">Logradouro</div>
+                <input type="text" class="form-input" id="logradouro" placeholder=" " autocomplete="off">
+                <div class="form-border"></div>
+            </div>
+            
+            <!-- Campos de Número e Complemento -->
+            <div class="input-row">
+                <div class="input-group">
+                    <div class="input-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </div>
+                    <div class="field-label">Número</div>
+                    <input type="text" class="form-input" id="numero" placeholder=" " autocomplete="off">
+                    <div class="form-border"></div>
+                </div>
+                
+                <div class="input-group">
+                    <div class="input-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                        </svg>
+                    </div>
+                    <div class="field-label">Complemento</div>
+                    <input type="text" class="form-input" id="complemento" placeholder=" " autocomplete="off">
+                    <div class="form-border"></div>
+                </div>
+            </div>
+            
+            <button class="submit-button" id="btnCadastrar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                    <polyline points="7 3 7 8 15 8"></polyline>
+                </svg>
+                Cadastrar Cliente
+            </button>
+        </div>
+    </div>
+
+    <script src="../scripts/cadastro-cliente.js"></script>
+</body>
+</html>

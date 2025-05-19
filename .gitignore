@@ -1,0 +1,28 @@
+# Dependências
+node_modules/
+
+# Arquivos de pacotes 
+package-lock.json
+package.json
+
+# Logs
+logs
+*.log
+
+# Diretórios e arquivos de IDE/Editores
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# Arquivos de configuração específicos do projeto
+config.js
+config.json
+
+# Arquivos temporários
+tmp/
+.tmp/
+temp/git init
+.temp/

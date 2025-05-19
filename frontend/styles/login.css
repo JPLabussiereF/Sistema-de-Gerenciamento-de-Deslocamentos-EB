@@ -1,0 +1,216 @@
+:root {
+    --azul-royal: #0033A0;
+    --azul-claro: #3366CC;
+    --azul-escuro: #001F5B;
+    --branco: #FFFFFF;
+    --cinza-claro: #f2f2f2;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--branco);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    background-color: var(--azul-royal);
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo-container {
+    width: 160px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 10px;
+    overflow: hidden;
+}
+
+.logo-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.login-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background-color: var(--cinza-claro);
+}
+
+.login-card {
+    background-color: var(--branco);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 51, 160, 0.15);
+    width: 100%;
+    max-width: 360px;
+    padding: 28px;
+    transition: transform 0.3s, opacity 0.3s;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.login-card:hover {
+    transform: translateY(-5px);
+}
+
+.login-title {
+    text-align: center;
+    color: var(--azul-escuro);
+    font-size: 24px;
+    margin-bottom: 32px;
+    font-weight: 600;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 28px;
+}
+
+.input-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--azul-claro);
+    z-index: 2;
+    transition: top 0.3s;
+}
+
+.form-input {
+    width: 100%;
+    padding: 16px 12px 8px 40px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    transition: all 0.3s;
+    background-color: transparent;
+    z-index: 1;
+    border-bottom: 1px solid #ddd;
+    border-radius: 0;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: transparent;
+}
+
+.form-border {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 1px;
+    width: 100%;
+    background-color: #ddd;
+}
+
+.form-input:focus ~ .form-border,
+.form-input:not(:placeholder-shown) ~ .form-border {
+    height: 2px;
+    background-color: var(--azul-royal);
+}
+
+.form-label {
+    position: absolute;
+    left: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #777;
+    transition: all 0.3s;
+    pointer-events: none;
+    font-size: 16px;
+    z-index: 1;
+    padding: 0 4px;
+    background-color: transparent;
+}
+
+.form-input:focus ~ .form-label,
+.form-input:not(:placeholder-shown) ~ .form-label,
+.form-input:valid ~ .form-label {
+    top: 0;
+    left: 12px;
+    font-size: 12px;
+    color: var(--azul-royal);
+    font-weight: 500;
+    background-color: var(--branco);
+    z-index: 3;
+}
+
+.form-input:focus + .input-icon,
+.form-input:not(:placeholder-shown) + .input-icon {
+    top: 50%;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--azul-claro);
+    cursor: pointer;
+    z-index: 2;
+}
+
+.password-toggle:hover {
+    color: var(--azul-royal);
+}
+
+.login-button {
+    background-color: var(--azul-royal);
+    color: var(--branco);
+    border: none;
+    border-radius: 6px;
+    padding: 16px;
+    width: 100%;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 8px rgba(0, 51, 160, 0.2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.login-button:hover {
+    background-color: var(--azul-escuro);
+    box-shadow: 0 6px 12px rgba(0, 51, 160, 0.3);
+    transform: translateY(-2px);
+}
+
+.login-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 51, 160, 0.2);
+}
+
+.footer {
+    background-color: var(--azul-escuro);
+    color: var(--branco);
+    text-align: center;
+    padding: 16px;
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    .login-card {
+        max-width: 400px;
+        padding: 32px;
+    }
+}

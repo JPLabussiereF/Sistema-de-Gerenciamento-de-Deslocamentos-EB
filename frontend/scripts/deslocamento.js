@@ -1,23 +1,27 @@
-// Correção 1: Melhorar a verificação de km inicial e km final
 document.addEventListener('DOMContentLoaded', function() {
-    // Opções para autocomplete
-    const localOptions = ['Casa', 'Almoço', 'Elétrica Bahiana - EB'];
-    const clienteOptions = ['Sem cliente'];
+    // Armazenar o usuário logado (ID e função)
+    const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado')) || {};
     
-    // Configuração dos campos de autocomplete
-    setupAutocomplete('origem', localOptions);
-    setupAutocomplete('destino', localOptions);
-    setupAutocomplete('cliente', clienteOptions);
+    // Verificar se o usuário está logado
+    if (!usuarioLogado.id_usuario) {
+        // Redirecionar para a página de login se não estiver autenticado
+        window.location.href = 'login.html';
+        return;
+    }
+    
+    // Armazenar os dados recuperados do servidor
+    let clientesData = [];
+    let locaisData = [];
+    
+    // Opções fixas para fallback caso a API falhe
+    const localOptionsFixas = ['Casa', 'Almoço', 'Elétrica Bahiana - EB'];
+    const clienteOptionsFixas = ['Sem cliente'];
+    
+    // Buscar dados do servidor
+    fetchOpcoesAutocomplete();
     
     // Definir a data e hora atual como padrão
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    
-    document.getElementById('dataHora').value = `${year}-${month}-${day}T${hours}:${minutes}`;
+    setDefaultDateTime();
     
     // Verificar e atualizar as labels dos campos que já possuem valores
     checkInputsWithValues();
@@ -31,14 +35,21 @@ document.addEventListener('DOMContentLoaded', function() {
     // Adicionar eventos para atualização automática do campo Cliente
     document.getElementById('destino').addEventListener('change', function() {
         // Se o destino for Casa, Almoço ou EB, preenche automaticamente Cliente como "Sem cliente"
-        if (localOptions.some(option => this.value.includes(option))) {
+        if (this.value === 'Casa' || this.value === 'Almoço' || this.value === 'Elétrica Bahiana - EB') {
             document.getElementById('cliente').value = 'Sem cliente';
             activateFloatingLabel(document.getElementById('cliente'));
+        } else {
+            // Verificar se o destino selecionado é um cliente e selecionar automaticamente o mesmo cliente
+            const clienteSelecionado = clientesData.find(
+                cliente => cliente.nome === this.value
+            );
+            
+            if (clienteSelecionado) {
+                document.getElementById('cliente').value = clienteSelecionado.nome;
+                activateFloatingLabel(document.getElementById('cliente'));
+            }
         }
     });
-    
-    // CORREÇÃO: Remover validação durante digitação do kmFinal
-    // A validação agora só ocorrerá no momento do envio do formulário
     
     // Melhoria na validação do kmFinal durante o foco
     document.getElementById('kmFinal').addEventListener('focus', function() {
@@ -50,55 +61,73 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Adicionar eventos específicos para campos numéricos
-    // CORREÇÃO: Adicionar eventos para ativar label flutuante em campos numéricos
-    document.getElementById('kmInicio').addEventListener('input', function() {
-        if (this.value) {
-            activateFloatingLabel(this);
-        } else {
-            resetLabel(this);
-        }
-    });
-    
-    document.getElementById('kmFinal').addEventListener('input', function() {
-        if (this.value) {
-            activateFloatingLabel(this);
-        } else {
-            resetLabel(this);
-        }
-    });
+    document.getElementById('kmInicio').addEventListener('input', handleInputChange);
+    document.getElementById('kmFinal').addEventListener('input', handleInputChange);
     
     // Configurar eventos para os radio buttons de ação
-    const radioOptions = document.querySelectorAll('.radio-option');
-    radioOptions.forEach(option => {
-        const radioInput = option.querySelector('input[type="radio"]');
-        
-        // Quando um radio é clicado
-        radioInput.addEventListener('change', function() {
-            // Remover a classe 'selected' de todos os radio options
-            radioOptions.forEach(opt => opt.classList.remove('selected'));
-            
-            // Adicionar a classe 'selected' apenas ao radio option selecionado
-            if (this.checked) {
-                option.classList.add('selected');
-            }
-        });
-        
-        // Quando clica no label inteiro (para melhor UX)
-        option.addEventListener('click', function() {
-            const radio = this.querySelector('input[type="radio"]');
-            radio.checked = true;
-            
-            // Dispara o evento change manualmente
-            const event = new Event('change');
-            radio.dispatchEvent(event);
-        });
-    });
+    configureRadioButtons();
 });
+
+// Função para buscar opções de autocomplete da API
+async function fetchOpcoesAutocomplete() {
+    const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado')) || {};
+    const userId = usuarioLogado.id_usuario;
+    
+    if (!userId) return;
+    
+    try {
+        // Buscar clientes do usuário logado
+        const clientesResponse = await fetch(`http://localhost:3000/api/autocomplete/clientes?userId=${userId}`);
+        const clientesResult = await clientesResponse.json();
+        
+        if (clientesResult.clientes && Array.isArray(clientesResult.clientes)) {
+            clientesData = clientesResult.clientes;
+            
+            // Configurar autocomplete para cliente com dados do servidor
+            setupAutocomplete('cliente', [
+                'Sem cliente', 
+                ...clientesData.map(cliente => cliente.nome)
+            ]);
+        } else {
+            // Fallback para opções fixas se a API falhar
+            setupAutocomplete('cliente', clienteOptionsFixas);
+        }
+        
+        // Buscar locais (fixos + clientes)
+        const locaisResponse = await fetch(`http://localhost:3000/api/autocomplete/locais?userId=${userId}`);
+        const locaisResult = await locaisResponse.json();
+        
+        if (locaisResult.locais && Array.isArray(locaisResult.locais)) {
+            locaisData = locaisResult.locais;
+            
+            // Extrair apenas os nomes para o autocomplete
+            const nomesDosLocais = locaisData.map(local => local.nome);
+            
+            // Configurar autocomplete para origem e destino com dados do servidor
+            setupAutocomplete('origem', nomesDosLocais);
+            setupAutocomplete('destino', nomesDosLocais);
+        } else {
+            // Fallback para opções fixas se a API falhar
+            setupAutocomplete('origem', localOptionsFixas);
+            setupAutocomplete('destino', localOptionsFixas);
+        }
+    } catch (error) {
+        console.error('Erro ao buscar dados para autocomplete:', error);
+        
+        // Se houver erro na API, usar opções fixas
+        setupAutocomplete('cliente', clienteOptionsFixas);
+        setupAutocomplete('origem', localOptionsFixas);
+        setupAutocomplete('destino', localOptionsFixas);
+    }
+}
 
 // Função para configurar autocomplete em um campo
 function setupAutocomplete(fieldId, options) {
     const inputField = document.getElementById(fieldId);
     const dropdownList = document.getElementById(fieldId + 'Dropdown');
+    
+    // Atributo para armazenar as opções válidas
+    inputField.dataset.validOptions = JSON.stringify(options);
     
     // Função para mostrar as opções do dropdown
     function showDropdown() {
@@ -116,6 +145,14 @@ function setupAutocomplete(fieldId, options) {
             const item = document.createElement('div');
             item.className = 'dropdown-item';
             item.textContent = option;
+            
+            // Adicionar título para exibir o endereço completo (se disponível)
+            if (fieldId === 'cliente' || fieldId === 'origem' || fieldId === 'destino') {
+                const dadoCompleto = getEnderecoCompleto(option);
+                if (dadoCompleto) {
+                    item.title = dadoCompleto;
+                }
+            }
             
             item.addEventListener('click', function() {
                 inputField.value = option;
@@ -163,11 +200,16 @@ function setupAutocomplete(fieldId, options) {
             dropdownList.style.display = 'none';
             
             // Verificar se o valor digitado está na lista de opções
-            if (inputField.value && !options.some(opt => opt.toLowerCase() === inputField.value.toLowerCase())) {
-                // Se não estiver na lista e for o campo cliente, permitir valores não listados
-                if (fieldId !== 'cliente') {
-                    inputField.value = '';
-                    resetLabel(inputField);
+            const validOptions = JSON.parse(inputField.dataset.validOptions || '[]');
+            
+            if (inputField.value && !validOptions.some(opt => opt.toLowerCase() === inputField.value.toLowerCase())) {
+                // Se não estiver na lista e for o campo cliente, também validar
+                // Não permitir valores não listados - maior restrição
+                inputField.value = '';
+                resetLabel(inputField);
+                
+                if (inputField.value !== '') {
+                    mostrarMensagem('erro', 'Valor Inválido', 'Por favor, selecione uma opção da lista.');
                 }
             }
         }
@@ -183,9 +225,42 @@ function setupAutocomplete(fieldId, options) {
             }
         });
     });
+    
+    // Validar ao perder o foco
+    inputField.addEventListener('blur', function() {
+        if (this.value) {
+            // Verificar se o valor é válido
+            const validOptions = JSON.parse(this.dataset.validOptions || '[]');
+            const isValid = validOptions.some(
+                opt => opt.toLowerCase() === this.value.toLowerCase()
+            );
+            
+            if (!isValid) {
+                this.value = '';
+                resetLabel(this);
+                mostrarMensagem('erro', 'Valor Inválido', 'Por favor, selecione uma opção da lista.');
+            }
+        }
+    });
 }
 
-// Função para validar e enviar o formulário
+// Função para obter o endereço completo de um cliente ou local
+function getEnderecoCompleto(nome) {
+    // Verificar nos clientes
+    const clienteEncontrado = clientesData.find(cliente => cliente.nome === nome);
+    if (clienteEncontrado) {
+        return clienteEncontrado.endereco_completo;
+    }
+    
+    // Verificar nos locais
+    const localEncontrado = locaisData.find(local => local.nome === nome);
+    if (localEncontrado) {
+        return localEncontrado.endereco_completo;
+    }
+    
+    return null;
+}
+
 // Função para validar e enviar o formulário - com mensagens modais
 function validarEEnviar() {
     const origem = document.getElementById('origem').value.trim();
@@ -205,9 +280,20 @@ function validarEEnviar() {
         }
     }
     
+    // Validar que os valores dos campos estão na lista de opções válidas
+    const origemOptions = JSON.parse(document.getElementById('origem').dataset.validOptions || '[]');
+    const destinoOptions = JSON.parse(document.getElementById('destino').dataset.validOptions || '[]');
+    const clienteOptions = JSON.parse(document.getElementById('cliente').dataset.validOptions || '[]');
+    
     // Validação básica com mensagens de erro em modal
     if (!origem) {
         mostrarMensagem('erro', 'Campo Obrigatório', 'Por favor, preencha o campo Origem.');
+        document.getElementById('origem').focus();
+        return;
+    }
+    
+    if (!origemOptions.some(opt => opt.toLowerCase() === origem.toLowerCase())) {
+        mostrarMensagem('erro', 'Origem Inválida', 'Por favor, selecione uma origem válida da lista.');
         document.getElementById('origem').focus();
         return;
     }
@@ -218,8 +304,20 @@ function validarEEnviar() {
         return;
     }
     
+    if (!destinoOptions.some(opt => opt.toLowerCase() === destino.toLowerCase())) {
+        mostrarMensagem('erro', 'Destino Inválido', 'Por favor, selecione um destino válido da lista.');
+        document.getElementById('destino').focus();
+        return;
+    }
+    
     if (!cliente) {
         mostrarMensagem('erro', 'Campo Obrigatório', 'Por favor, preencha o campo Cliente.');
+        document.getElementById('cliente').focus();
+        return;
+    }
+    
+    if (!clienteOptions.some(opt => opt.toLowerCase() === cliente.toLowerCase())) {
+        mostrarMensagem('erro', 'Cliente Inválido', 'Por favor, selecione um cliente válido da lista.');
         document.getElementById('cliente').focus();
         return;
     }
@@ -262,49 +360,136 @@ function validarEEnviar() {
         return;
     }
     
+    // Recuperar IDs dos objetos selecionados
+    const clienteId = getIdPorNome(cliente, 'cliente');
+    
+    // Encontrar cliente/local associado à origem e destino
+    const origemId = getIdPorNome(origem, 'local');
+    const destinoId = getIdPorNome(destino, 'local');
+    
     // Preparação dos dados para envio
     const dadosDeslocamento = {
-        origem,
-        destino,
-        cliente,
+        origem_id: origemId,
+        origem_nome: origem,
+        destino_id: destinoId, 
+        destino_nome: destino,
+        cliente_id: clienteId,
+        cliente_nome: cliente,
         dataHora,
         kmInicio: kmInicioNum,
         kmFinal: kmFinalNum,
-        acao
+        acao,
+        usuario_id: getUserId()
     };
 
     console.log('Dados do deslocamento:', dadosDeslocamento);
 
-    // Simulação de envio com mensagem de sucesso
-    mostrarMensagem('sucesso', 'Registro Concluído', 'Deslocamento registrado com sucesso!');
-
-    // Limpar formulário após envio bem-sucedido
-    resetForm();
-    
-    /* Exemplo de código para enviar para um servidor:
-    
-    fetch('/api/deslocamentos', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(dadosDeslocamento)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.sucesso) {
+    // Simular um envio para API
+    try {
+        // Simulação de envio com mensagem de sucesso
+        setTimeout(() => {
             mostrarMensagem('sucesso', 'Registro Concluído', 'Deslocamento registrado com sucesso!');
             resetForm();
-        } else {
-            mostrarMensagem('erro', 'Erro no Registro', 'Erro ao registrar deslocamento: ' + data.mensagem);
-        }
-    })
-    .catch(error => {
+        }, 500);
+        
+        // Código real para envio ao servidor (comentado)
+        /*
+        fetch('http://localhost:3000/api/deslocamentos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': getUserId()
+            },
+            body: JSON.stringify(dadosDeslocamento)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro na resposta do servidor');
+            }
+            return response.json();
+        })
+        .then(data => {
+            mostrarMensagem('sucesso', 'Registro Concluído', 'Deslocamento registrado com sucesso!');
+            resetForm();
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            mostrarMensagem('erro', 'Erro no Sistema', 'Erro ao tentar registrar o deslocamento. Tente novamente mais tarde.');
+        });
+        */
+    } catch (error) {
         console.error('Erro:', error);
         mostrarMensagem('erro', 'Erro no Sistema', 'Erro ao tentar registrar o deslocamento. Tente novamente mais tarde.');
-    });
+    }
+}
+
+// Função para obter o ID de um cliente ou local pelo nome
+function getIdPorNome(nome, tipo) {
+    if (tipo === 'cliente') {
+        const clienteEncontrado = clientesData.find(c => c.nome === nome);
+        return clienteEncontrado ? clienteEncontrado.id_cliente : null;
+    } else if (tipo === 'local') {
+        const localEncontrado = locaisData.find(l => l.nome === nome);
+        return localEncontrado ? localEncontrado.id || localEncontrado.id_cliente : null;
+    }
+    return null;
+}
+
+// Função para obter o ID do usuário logado
+function getUserId() {
+    const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado')) || {};
+    return usuarioLogado.id_usuario;
+}
+
+// Função para definir data e hora padrão
+function setDefaultDateTime() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
     
-    */
+    document.getElementById('dataHora').value = `${year}-${month}-${day}T${hours}:${minutes}`;
+    activateFloatingLabel(document.getElementById('dataHora'));
+}
+
+// Handler genérico para eventos de input
+function handleInputChange() {
+    if (this.value) {
+        activateFloatingLabel(this);
+    } else {
+        resetLabel(this);
+    }
+}
+
+// Configurar eventos para radio buttons
+function configureRadioButtons() {
+    const radioOptions = document.querySelectorAll('.radio-option');
+    radioOptions.forEach(option => {
+        const radioInput = option.querySelector('input[type="radio"]');
+        
+        // Quando um radio é clicado
+        radioInput.addEventListener('change', function() {
+            // Remover a classe 'selected' de todos os radio options
+            radioOptions.forEach(opt => opt.classList.remove('selected'));
+            
+            // Adicionar a classe 'selected' apenas ao radio option selecionado
+            if (this.checked) {
+                option.classList.add('selected');
+            }
+        });
+        
+        // Quando clica no label inteiro (para melhor UX)
+        option.addEventListener('click', function() {
+            const radio = this.querySelector('input[type="radio"]');
+            radio.checked = true;
+            
+            // Dispara o evento change manualmente
+            const event = new Event('change');
+            radio.dispatchEvent(event);
+        });
+    });
 }
 
 // Função para resetar o formulário
@@ -316,15 +501,8 @@ function resetForm() {
     document.getElementById('kmInicio').value = '';
     document.getElementById('kmFinal').value = '';
     
-    // Definir a data e hora atual
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    
-    document.getElementById('dataHora').value = `${year}-${month}-${day}T${hours}:${minutes}`;
+    // Atualizar a data e hora atual
+    setDefaultDateTime();
     
     // Desmarcar os radio buttons e remover a classe 'selected'
     const radioButtons = document.getElementsByName('acao');
@@ -395,10 +573,6 @@ function checkInputsWithValues() {
         }
     });
 }
-window.addEventListener('DOMContentLoaded', () => {
-    resetForm();
-});
-
 
 // Funções para o modal de mensagem
 function mostrarMensagem(tipo, titulo, mensagem) {

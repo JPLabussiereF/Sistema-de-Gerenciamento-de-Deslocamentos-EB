@@ -40,11 +40,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // CORREÇÃO: Remover validação durante digitação do kmFinal
     // A validação agora só ocorrerá no momento do envio do formulário
     
-    // CORREÇÃO: Verificar apenas se o kmInicio está preenchido antes de editar kmFinal
+    // Melhoria na validação do kmFinal durante o foco
     document.getElementById('kmFinal').addEventListener('focus', function() {
         const kmInicio = document.getElementById('kmInicio').value;
         if (kmInicio === '') {  // Verifica se está realmente vazio
-            alert('Por favor, preencha o Km Início primeiro');
+            mostrarMensagem('erro', 'Sequência Incorreta', 'Por favor, preencha o Km Início primeiro');
             document.getElementById('kmInicio').focus();
         }
     });
@@ -186,6 +186,7 @@ function setupAutocomplete(fieldId, options) {
 }
 
 // Função para validar e enviar o formulário
+// Função para validar e enviar o formulário - com mensagens modais
 function validarEEnviar() {
     const origem = document.getElementById('origem').value.trim();
     const destino = document.getElementById('destino').value.trim();
@@ -204,45 +205,45 @@ function validarEEnviar() {
         }
     }
     
-    // Validação básica
+    // Validação básica com mensagens de erro em modal
     if (!origem) {
-        alert('Por favor, preencha o campo Origem');
+        mostrarMensagem('erro', 'Campo Obrigatório', 'Por favor, preencha o campo Origem.');
         document.getElementById('origem').focus();
         return;
     }
     
     if (!destino) {
-        alert('Por favor, preencha o campo Destino');
+        mostrarMensagem('erro', 'Campo Obrigatório', 'Por favor, preencha o campo Destino.');
         document.getElementById('destino').focus();
         return;
     }
     
     if (!cliente) {
-        alert('Por favor, preencha o campo Cliente');
+        mostrarMensagem('erro', 'Campo Obrigatório', 'Por favor, preencha o campo Cliente.');
         document.getElementById('cliente').focus();
         return;
     }
     
     if (!dataHora) {
-        alert('Por favor, preencha o campo Data e Hora');
+        mostrarMensagem('erro', 'Campo Obrigatório', 'Por favor, preencha o campo Data e Hora.');
         document.getElementById('dataHora').focus();
         return;
     }
     
     if (!kmInicio) {
-        alert('Por favor, preencha o campo KM Início');
+        mostrarMensagem('erro', 'Campo Obrigatório', 'Por favor, preencha o campo KM Inicial.');
         document.getElementById('kmInicio').focus();
         return;
     }
     
     if (!kmFinal) {
-        alert('Por favor, preencha o campo KM Final');
+        mostrarMensagem('erro', 'Campo Obrigatório', 'Por favor, preencha o campo KM Final.');
         document.getElementById('kmFinal').focus();
         return;
     }
     
     if (!acao) {
-        alert('Por favor, selecione uma Ação do Trajeto');
+        mostrarMensagem('erro', 'Campo Obrigatório', 'Por favor, selecione uma Ação do Trajeto.');
         return;
     }
     
@@ -251,12 +252,12 @@ function validarEEnviar() {
     const kmFinalNum = parseFloat(kmFinal);
     
     if (isNaN(kmInicioNum) || isNaN(kmFinalNum)) {
-        alert('Valores de Km devem ser numéricos');
+        mostrarMensagem('erro', 'Dados Inválidos', 'Valores de Km devem ser numéricos.');
         return;
     }
     
     if (kmFinalNum <= kmInicioNum) {
-        alert('O Km Final deve ser maior que o Km Inicial');
+        mostrarMensagem('erro', 'Dados Inválidos', 'O Km Final deve ser maior que o Km Inicial.');
         document.getElementById('kmFinal').focus();
         return;
     }
@@ -274,8 +275,8 @@ function validarEEnviar() {
 
     console.log('Dados do deslocamento:', dadosDeslocamento);
 
-    // Simulação de envio
-    alert('Deslocamento registrado com sucesso!');
+    // Simulação de envio com mensagem de sucesso
+    mostrarMensagem('sucesso', 'Registro Concluído', 'Deslocamento registrado com sucesso!');
 
     // Limpar formulário após envio bem-sucedido
     resetForm();
@@ -292,15 +293,15 @@ function validarEEnviar() {
     .then(response => response.json())
     .then(data => {
         if (data.sucesso) {
-            alert('Deslocamento registrado com sucesso!');
+            mostrarMensagem('sucesso', 'Registro Concluído', 'Deslocamento registrado com sucesso!');
             resetForm();
         } else {
-            alert('Erro ao registrar deslocamento: ' + data.mensagem);
+            mostrarMensagem('erro', 'Erro no Registro', 'Erro ao registrar deslocamento: ' + data.mensagem);
         }
     })
     .catch(error => {
         console.error('Erro:', error);
-        alert('Erro ao tentar registrar o deslocamento');
+        mostrarMensagem('erro', 'Erro no Sistema', 'Erro ao tentar registrar o deslocamento. Tente novamente mais tarde.');
     });
     
     */
@@ -397,3 +398,63 @@ function checkInputsWithValues() {
 window.addEventListener('DOMContentLoaded', () => {
     resetForm();
 });
+
+
+// Funções para o modal de mensagem
+function mostrarMensagem(tipo, titulo, mensagem) {
+    const modal = document.getElementById('mensagemModal');
+    const container = modal.querySelector('.mensagem-modal-container');
+    const iconeDiv = modal.querySelector('.mensagem-modal-icone');
+    const tituloEl = modal.querySelector('.mensagem-modal-titulo');
+    const bodyEl = modal.querySelector('.mensagem-modal-body');
+    
+    // Limpar classes anteriores
+    container.classList.remove('mensagem-sucesso', 'mensagem-erro');
+    
+    // Definir o conteúdo
+    tituloEl.textContent = titulo;
+    bodyEl.textContent = mensagem;
+    
+    // Configurar o ícone baseado no tipo
+    if (tipo === 'sucesso') {
+        container.classList.add('mensagem-sucesso');
+        iconeDiv.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+        `;
+    } else if (tipo === 'erro') {
+        container.classList.add('mensagem-erro');
+        iconeDiv.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+        `;
+    }
+    
+    // Mostrar o modal
+    modal.style.display = 'flex';
+    
+    // Adicionar classe 'ativo' após um pequeno atraso para ter efeito de animação
+    setTimeout(() => {
+        container.classList.add('ativo');
+    }, 10);
+}
+
+function fecharModal() {
+    const modal = document.getElementById('mensagemModal');
+    const container = modal.querySelector('.mensagem-modal-container');
+    
+    // Adicionar classe 'fechando' para animar a saída
+    container.classList.remove('ativo');
+    container.classList.add('fechando');
+    
+    // Esperar a animação terminar antes de esconder o modal
+    setTimeout(() => {
+        modal.style.display = 'none';
+        container.classList.remove('fechando');
+    }, 300);
+}

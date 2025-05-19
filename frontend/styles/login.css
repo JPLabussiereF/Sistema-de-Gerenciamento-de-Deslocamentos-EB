@@ -4,6 +4,12 @@
     --azul-escuro: #001F5B;
     --branco: #FFFFFF;
     --cinza-claro: #f2f2f2;
+    --cinza-medio: #E2E8F0;
+    --texto-primario: #172B4D;
+    --verde-sucesso: #10b981;
+    --verde-sucesso-escuro: #059669;
+    --vermelho-erro: #ef4444;
+    --vermelho-erro-escuro: #dc2626;
 }
 
 * {

@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     const btnLogin = document.getElementById('btnLogin');
-    const inputUsuario = document.getElementById('usuario');
+    const inputIdentificador = document.getElementById('usuario'); // CPF ou Email
     const inputSenha = document.getElementById('senha');
     const togglePassword = document.getElementById('togglePassword');
     const eyeIcon = document.querySelector('.eye-icon');
@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const inputs = document.querySelectorAll('.form-input');
 
     // Adiciona atributo placeholder vazio para funcionar com o CSS
-    inputUsuario.setAttribute('placeholder', ' ');
+    inputIdentificador.setAttribute('placeholder', ' ');
     inputSenha.setAttribute('placeholder', ' ');
 
     // Função para ativar a label flutuante
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
     btnLogin.addEventListener('click', realizarLogin);
 
     // Adiciona evento de tecla Enter nos campos
-    inputUsuario.addEventListener('keypress', verificaTeclaEnter);
+    inputIdentificador.addEventListener('keypress', verificaTeclaEnter);
     inputSenha.addEventListener('keypress', verificaTeclaEnter);
 
     // Adiciona evento para mostrar/ocultar senha
@@ -73,10 +73,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // Verifica se há dados salvos no localStorage
     const lembrarUsuario = localStorage.getItem('lembrarUsuario');
     if (lembrarUsuario) {
-        inputUsuario.value = lembrarUsuario;
+        inputIdentificador.value = lembrarUsuario;
         // Simula o evento para ativar o efeito de label flutuante
         const event = new Event('input');
-        inputUsuario.dispatchEvent(event);
+        inputIdentificador.dispatchEvent(event);
     }
 
     // Adiciona efeito de "animação" no card de login ao carregar a página
@@ -88,67 +88,38 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Função para validar e enviar login
     function realizarLogin() {
-        const usuario = inputUsuario.value.trim();
-        const senha = inputSenha.value.trim();
+        const usuario = document.getElementById('usuario').value.trim();
+        const senha = document.getElementById('senha').value.trim();
 
-        // Validação básica
-        if (!usuario || !senha) {
-            alert('Por favor, preencha todos os campos');
-            return;
-        }
-
-        // Validação de formato de CPF ou email
-        if (!validarCpf(usuario)) {
-            alert('Por favor, insira um CPF válido ou um email @EB');
-            return;
-        }
-
-        // Aqui você pode implementar a lógica de autenticação
-        console.log('Tentativa de login:', usuario);
-
-        // Simulação de login
-        alert('Login enviado com sucesso!');
-
-        /* Exemplo de código para enviar para um servidor:
-        
-        fetch('/api/login', {
+        fetch('http://localhost:3000/api/login', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                usuario: usuario,
-                senha: senha
-            })
+            body: JSON.stringify({ usuario, senha }),
         })
         .then(response => response.json())
         .then(data => {
-            if (data.sucesso) {
-                window.location.href = '/dashboard';
+            if (data.mensagem) {
+                alert(data.mensagem); // mensagem de erro
             } else {
-                alert('Usuário ou senha incorretos');
+                if (data.funcao === 'adm') {
+                    window.location.href = 'cadastro-cliente.html';
+                } else if (data.funcao === 'vendedor') {
+                    window.location.href = 'deslocamento.html';
+                } else {
+                    alert('Função desconhecida.');
+                }                
             }
         })
         .catch(error => {
-            console.error('Erro:', error);
-            alert('Erro ao tentar fazer login');
+            console.error('Erro ao fazer login:', error);
         });
-        
-        */
     }
-
     // Função para verificar se a tecla Enter foi pressionada
     function verificaTeclaEnter(event) {
         if (event.key === 'Enter') {
             realizarLogin();
         }
-    }
-
-    // Função para validar formato de CPF
-    function validarCpf(valor) {
-        // Verifica se é um CPF (somente números, 11 dígitos)
-        const cpfRegex = /^\d{11}$/;
-
-        return cpfRegex.test(valor);
     }
 });

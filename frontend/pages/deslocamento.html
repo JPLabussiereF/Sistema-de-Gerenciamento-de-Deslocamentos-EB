@@ -177,6 +177,29 @@
                 Enviar Formulário
             </button>
         </div>
+        <!-- Modal de Mensagem -->
+<div id="mensagemModal" class="mensagem-modal-overlay" style="display: none;">
+    <div class="mensagem-modal-container">
+        <div class="mensagem-modal-header">
+            <div class="mensagem-modal-icone">
+                <!-- O ícone será adicionado dinamicamente via JS -->
+            </div>
+            <h3 class="mensagem-modal-titulo"><!-- Título será adicionado dinamicamente --></h3>
+            <button class="mensagem-modal-fechar-x" onclick="fecharModal()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="mensagem-modal-body">
+            <!-- Conteúdo será adicionado dinamicamente -->
+        </div>
+        <div class="mensagem-modal-footer">
+            <button class="mensagem-modal-btn-fechar" onclick="fecharModal()">Fechar</button>
+        </div>
+    </div>
+</div>
     </div>
 
     <script src="../scripts/deslocamento.js"></script>

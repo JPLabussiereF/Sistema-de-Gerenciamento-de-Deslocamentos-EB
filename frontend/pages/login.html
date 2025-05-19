@@ -5,13 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Elétrica Bahiana</title>
     <link rel="stylesheet" href="../styles/login.css">
-    <link rel="shortcut icon" href="../assets/images/logotipo_eb_branco.svg" type="image/png">
+    <link rel="shortcut icon" href="../images/logotipo_eb_branco.svg" type="image/png">
+    <style>
+        /* Estilos inline para lidar com o preenchimento automático */
+        @keyframes onAutoFillStart {
+            from { }
+            to { }
+        }
+        
+        @keyframes onAutoFillCancel {
+            from { }
+            to { }
+        }
+        
+        input:-webkit-autofill {
+            animation-name: onAutoFillStart;
+            transition: background-color 50000s ease-in-out 0s;
+        }
+        
+        input:not(:-webkit-autofill) {
+            animation-name: onAutoFillCancel;
+        }
+        
+        /* Garante que as labels fiquem acima quando preenchidas automaticamente */
+        input:-webkit-autofill ~ .form-label {
+            top: 0 !important;
+            left: 12px !important;
+            font-size: 12px !important;
+            color: var(--azul-royal) !important;
+            font-weight: 500 !important;
+            background-color: #FFFFFF !important;
+            z-index: 3 !important;
+        }
+    </style>
 </head>
 <body>
     <div class="header">
         <div class="logo-container">
             <!-- Substitua esta imagem pela sua logo -->
-            <img src="../assets/images/logo.png" alt="Logo da Empresa" class="logo-image">
+            <img src="../images/logo.png" alt="Logo da Empresa" class="logo-image">
         </div>
     </div>
     
@@ -26,7 +58,7 @@
                         <circle cx="12" cy="7" r="4"></circle>
                     </svg>
                 </div>
-                <input type="text" class="form-input" id="usuario" required>
+                <input type="text" class="form-input" id="usuario" placeholder=" " required>
                 <label for="usuario" class="form-label">CPF ou Email (@EB)</label>
                 <div class="form-border"></div>
             </div>
@@ -38,7 +70,7 @@
                         <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                     </svg>
                 </div>
-                <input type="password" class="form-input" id="senha" required>
+                <input type="password" class="form-input" id="senha" placeholder=" " required>
                 <label for="senha" class="form-label">Senha</label>
                 <div class="form-border"></div>
                 <div class="password-toggle" id="togglePassword">

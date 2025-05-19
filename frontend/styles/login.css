@@ -41,8 +41,8 @@ body {
 }
 
 .logo-image {
-    max-width: 100%;
-    max-height: 100%;
+    max-width: 110%;
+    max-height: 110%;
     object-fit: contain;
 }
 
@@ -80,6 +80,7 @@ body {
     font-weight: 600;
 }
 
+/* Estilo para a label flutuante */
 .input-group {
     position: relative;
     margin-bottom: 28px;
@@ -92,14 +93,27 @@ body {
     transform: translateY(-50%);
     color: var(--azul-claro);
     z-index: 2;
-    transition: top 0.3s;
+}
+
+.form-label {
+    position: absolute;
+    left: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #777;
+    transition: all 0.3s;
+    pointer-events: none;
+    font-size: 16px;
+    z-index: 1;
+    padding: 0 4px;
+    background-color: transparent;
 }
 
 .form-input {
     width: 100%;
     padding: 16px 12px 8px 40px;
+    /* Padding à esquerda para acomodar o ícone */
     border: none;
-    border-radius: 6px;
     font-size: 16px;
     transition: all 0.3s;
     background-color: transparent;
@@ -122,29 +136,15 @@ body {
     background-color: #ddd;
 }
 
-.form-input:focus ~ .form-border,
-.form-input:not(:placeholder-shown) ~ .form-border {
+.form-input:focus~.form-border,
+.form-input:not(:placeholder-shown)~.form-border {
     height: 2px;
     background-color: var(--azul-royal);
 }
 
-.form-label {
-    position: absolute;
-    left: 40px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #777;
-    transition: all 0.3s;
-    pointer-events: none;
-    font-size: 16px;
-    z-index: 1;
-    padding: 0 4px;
-    background-color: transparent;
-}
-
-.form-input:focus ~ .form-label,
-.form-input:not(:placeholder-shown) ~ .form-label,
-.form-input:valid ~ .form-label {
+.form-input:focus~.form-label,
+.form-input:not(:placeholder-shown)~.form-label,
+.form-label.active {
     top: 0;
     left: 12px;
     font-size: 12px;
@@ -154,8 +154,18 @@ body {
     z-index: 3;
 }
 
-.form-input:focus + .input-icon,
-.form-input:not(:placeholder-shown) + .input-icon {
+/* Estilos específicos para autofill */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+    -webkit-text-fill-color: inherit !important;
+    transition: background-color 5000s ease-in-out 0s;
+    /* Longa duração para manter a cor */
+}
+
+.form-input:-webkit-autofill+.input-icon {
     top: 50%;
 }
 

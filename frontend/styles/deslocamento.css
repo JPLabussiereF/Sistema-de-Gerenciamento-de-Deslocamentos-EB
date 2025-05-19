@@ -1,0 +1,371 @@
+/* Variáveis de Cor baseadas no login.css */
+:root {
+    --azul-royal: #0033A0;
+    --azul-claro: #3366CC;
+    --azul-escuro: #001F5B;
+    --branco: #FFFFFF;
+    --cinza-claro: #f2f2f2;
+    --cinza-medio: #E2E8F0;
+    --texto-primario: #172B4D;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--cinza-claro);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header estilizado como o login.css */
+.header {
+    background-color: var(--azul-royal);
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo-container {
+    width: 160px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 10px;
+    overflow: hidden;
+}
+
+.logo-image {
+    max-width: 110%;
+    max-height: 110%;
+    object-fit: contain;
+}
+
+/* Título do formulário (novo) */
+.form-title {
+    color: var(--azul-escuro);
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--cinza-medio);
+}
+
+/* Container do formulário */
+.form-container {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.form-card {
+    background-color: var(--branco);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 51, 160, 0.15);
+    width: 100%;
+    max-width: 500px;
+    padding: 28px;
+    transition: transform 0.3s, opacity 0.3s;
+    opacity: 1;
+}
+
+.form-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Grupos de input */
+.input-group {
+    position: relative;
+    margin-bottom: 28px;
+}
+
+/* Posicionamento do ícone à esquerda do campo */
+.input-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--azul-claro);
+    z-index: 2;
+}
+
+.field-label {
+    position: absolute;
+    left: 40px; /* Posicionado após o ícone */
+    top: 50%;
+    transform: translateY(-50%);
+    color: #777;
+    transition: all 0.3s;
+    pointer-events: none;
+    font-size: 16px;
+    z-index: 1;
+    padding: 0 4px;
+    background-color: transparent;
+}
+
+#acaoTrajeto { 
+    font-size: 15px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 16px 12px 8px 40px; /* Padding à esquerda para acomodar o ícone */
+    border: none;
+    font-size: 16px;
+    transition: all 0.3s;
+    background-color: transparent;
+    z-index: 1;
+    border-bottom: 1px solid #ddd;
+    border-radius: 0;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: transparent;
+}
+
+.form-border {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 1px;
+    width: 100%;
+    background-color: #ddd;
+}
+
+.form-input:focus ~ .form-border,
+.form-input:not(:placeholder-shown) ~ .form-border {
+    height: 2px;
+    background-color: var(--azul-royal);
+}
+
+.form-input:focus ~ .field-label,
+.form-input:not(:placeholder-shown) ~ .field-label,
+.field-label.active {
+    top: 0;
+    left: 12px;
+    font-size: 12px;
+    color: var(--azul-royal);
+    font-weight: 500;
+    background-color: var(--branco);
+    z-index: 3;
+}
+
+/* Estilização para o campo datetime-local */
+input[type="datetime-local"] {
+    color: var(--texto-primario);
+    padding-left: 40px;
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+/* Estilização para inputs numéricos */
+input[type="number"] {
+    appearance: textfield; /* Default for compatibility */
+    -moz-appearance: textfield; /* Firefox */
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Estilização para o campo de autocomplete */
+.autocomplete-container {
+    position: relative;
+    width: 100%;
+}
+
+.dropdown-list {
+    display: none;
+    position: absolute;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: var(--branco);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    z-index: 10;
+    margin-top: 2px;
+    border: 1px solid var(--cinza-medio);
+}
+
+.dropdown-item {
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 14px;
+}
+
+.dropdown-item:hover {
+    background-color: var(--cinza-claro);
+    color: var(--azul-royal);
+}
+
+/* Destacando o campo "Ação do Trajeto" */
+.input-group.action-highlight {
+    background-color: rgba(0, 51, 160, 0.05);
+    border: 1px solid var(--azul-claro);
+    border-radius: 8px;
+    padding: 20px 15px;
+    margin-bottom: 32px;
+}
+
+.input-group.action-highlight .input-icon {
+    top: 20px; /* Mantém na mesma altura do topo */
+    transform: translateY(0); /* Remove transformação vertical */
+    left: 15px; /* Ajustando a posição horizontal */
+}
+
+.input-group.action-highlight .field-label {
+    color: var(--azul-royal);
+    font-weight: 500;
+    font-size: 18px;
+    left: 45px; /* Posiciona à direita do ícone */
+    top: 20px; /* Mantém na mesma altura que o ícone */
+    transform: translateY(0); /* Remove transformação vertical */
+    background-color: transparent;
+}
+
+/* Estilização para radio buttons */
+.radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    background-color: var(--cinza-claro);
+    border-radius: 6px;
+    padding: 10px 12px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    flex: 1 0 calc(50% - 5px);
+}
+
+.radio-option:hover {
+    background-color: var(--cinza-medio);
+    border-color: var(--azul-claro);
+}
+
+.radio-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.radio-option input[type="radio"]:checked + .radio-icon {
+    color: var(--azul-royal);
+}
+
+.radio-option input[type="radio"]:checked + .radio-icon + span {
+    color: var(--azul-royal);
+    font-weight: 500;
+}
+
+.radio-option input[type="radio"]:checked ~ * {
+    color: var(--azul-royal);
+}
+
+.radio-option input[type="radio"]:checked {
+    border-color: var(--azul-royal);
+}
+
+.radio-option input[type="radio"]:checked ~ .radio-option {
+    background-color: rgba(0, 82, 204, 0.05);
+    border-color: var(--azul-royal);
+}
+
+.radio-icon {
+    display: inline-flex;
+    color: #64748B;
+    transition: all 0.2s;
+}
+
+/* Opção selecionada */
+.radio-option.selected {
+    background-color: rgba(0, 51, 160, 0.1);
+    border-color: var(--azul-royal);
+}
+
+.radio-option.selected .radio-icon,
+.radio-option.selected span {
+    color: var(--azul-royal);
+    font-weight: 500;
+}
+
+/* Botão de enviar */
+.submit-button {
+    background-color: var(--azul-royal);
+    color: var(--branco);
+    border: none;
+    border-radius: 6px;
+    padding: 16px;
+    width: 100%;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 8px rgba(0, 51, 160, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 10px;
+}
+
+.submit-button:hover {
+    background-color: var(--azul-escuro);
+    box-shadow: 0 6px 12px rgba(0, 51, 160, 0.3);
+    transform: translateY(-2px);
+}
+
+.submit-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 51, 160, 0.2);
+}
+
+@media (max-width: 480px) {
+    .radio-option {
+        flex: 1 0 100%;
+    }
+    
+    .form-card {
+        padding: 20px;
+    }
+    
+    .input-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-title {
+        font-size: 20px;
+        margin-bottom: 20px; 
+    }
+}

@@ -77,6 +77,8 @@ body {
     padding: 28px;
     transition: transform 0.3s, opacity 0.3s;
     opacity: 1;
+    margin: 0 auto;
+    /* Centraliza horizontalmente */
 }
 
 .content-title {
@@ -565,6 +567,8 @@ body {
 @media (max-width: 768px) {
     .content-card {
         padding: 20px;
+        max-width: 95%;
+        /* Reduz ligeiramente a largura máxima */
     }
 
     .clients-table th,
@@ -572,36 +576,49 @@ body {
         padding: 10px 12px;
         font-size: 14px;
     }
-    
+
     .content-title {
         font-size: 20px;
     }
 }
 
+/* Ajustes para telas de celular */
 @media (max-width: 480px) {
     .container {
-        padding: 10px;
+        padding: 1px;
     }
-    
+
     .content-card {
         padding: 16px;
         border-radius: 8px;
+        max-width: 100%;
+        /* Largura total para celulares */
+        margin: 0 auto;
+        box-shadow: 0 4px 12px rgba(0, 51, 160, 0.12);
     }
-    
+
     .clients-table th,
     .clients-table td {
         padding: 8px 10px;
         font-size: 13px;
     }
-    
+
     .modal-container {
-        width: 95%;
+        width: 100%;
     }
-    
+
     .content-title {
         font-size: 18px;
         margin-bottom: 16px;
         padding-bottom: 12px;
+    }
+
+    /* Melhora a visualização da tabela em telas pequenas */
+    .table-container {
+        margin-left: -16px;
+        margin-right: -16px;
+        width: calc(100% + 32px);
+        border-radius: 0;
     }
 }
 

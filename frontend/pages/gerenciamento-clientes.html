@@ -62,6 +62,18 @@
             <div class="pagination-container" id="paginationContainer">
                 <!-- Paginação será adicionada dinamicamente -->
             </div>
+            <!-- Importação de clientes CSV -->
+            <div class="import-container">
+                <label for="importCsv" class="import-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    Importar Clientes CSV
+                </label>
+                <input type="file" id="importCsv" accept=".csv" style="display: none;">
+            </div>
         </div>
     </div>
     
@@ -119,7 +131,20 @@
             </div>
         </div>
     </div>
-    
+    <!-- Modal de progresso de importação -->
+    <div id="importProgressModal" class="import-progress-modal">
+        <div class="import-progress-container">
+            <h3 class="import-progress-title">Importando Clientes</h3>
+            <div class="progress-bar-container">
+                <div id="importProgressBar" class="progress-bar"></div>
+            </div>
+            <p id="importStatus" class="import-status">Processando arquivo...</p>
+            <div id="importSummary" class="import-summary" style="display: none;">
+                <!-- Resumo da importação será inserido aqui -->
+            </div>
+            <button id="importDoneBtn" class="import-done-btn" style="display: none;">Concluir</button>
+        </div>
+    </div>
     <script src="../scripts/gerenciamento-clientes.js"></script>
 </body>
 </html>

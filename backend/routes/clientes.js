@@ -243,6 +243,147 @@ function atualizarVendedor(clienteId, idVendedor, res) {
     });
 }
 
-
+    // Rota para importar clientes via CSV
+router.post('/importar', verificarAutenticacao, verificarAdmin, (req, res) => {
+    const { clientes } = req.body;
+    
+    console.log(`Recebida requisição para importar ${clientes ? clientes.length : 0} clientes`);
+    
+    if (!clientes || !Array.isArray(clientes) || clientes.length === 0) {
+        return res.status(400).json({
+            sucesso: false,
+            mensagem: 'Nenhum cliente válido para importação'
+        });
+    }
+    
+    const resultados = {
+        inseridos: 0,
+        ignorados: 0,
+        erros: []
+    };
+    
+    // Contador para rastrear clientes processados
+    let processados = 0;
+    
+    // Função para verificar se um cliente já existe
+    const verificarCliente = (cliente) => {
+        return new Promise((resolve, reject) => {
+            // Se cliente não tem cnpj ou cod_cliente, ignorar
+            if (!cliente.cnpj && !cliente.cod_cliente) {
+                return resolve(false);
+            }
+            
+            // Construir a consulta dinâmica baseada nos dados disponíveis
+            let query = 'SELECT id_cliente FROM cliente WHERE ';
+            let params = [];
+            
+            if (cliente.cod_cliente) {
+                query += 'cod_cliente = ?';
+                params.push(cliente.cod_cliente);
+                
+                if (cliente.cnpj) {
+                    query += ' OR cnpj = ?';
+                    params.push(cliente.cnpj);
+                }
+            } else if (cliente.cnpj) {
+                query += 'cnpj = ?';
+                params.push(cliente.cnpj);
+            }
+            
+            db.query(query, params, (err, results) => {
+                if (err) {
+                    console.error('Erro ao verificar cliente:', err);
+                    return reject(err);
+                }
+                resolve(results.length > 0);
+            });
+        });
+    };
+    
+        // Função para inserir um cliente
+        const inserirCliente = (cliente) => {
+            return new Promise((resolve, reject) => {
+                // Validar dados mínimos necessários
+                if (!cliente.nome_cliente) {
+                    return reject(new Error('Nome do cliente é obrigatório'));
+                }
+                
+                // Preparar a consulta SQL
+                const query = `
+                    INSERT INTO cliente 
+                        (cod_cliente, nome_cliente, cnpj, logradouro, bairro, cep, cidade, estado) 
+                    VALUES 
+                        (?, ?, ?, ?, ?, ?, ?, ?)
+                `;
+                
+                const params = [
+                    cliente.cod_cliente || null,
+                    cliente.nome_cliente,
+                    cliente.cnpj || null,
+                    cliente.logradouro || null,
+                    cliente.bairro || null,
+                    cliente.cep || null,
+                    cliente.cidade || null,
+                    cliente.estado || null
+                ];
+                
+                db.query(query, params, (err, result) => {
+                    if (err) {
+                        console.error('Erro ao inserir cliente:', err);
+                        return reject(err);
+                    }
+                    resolve(result.insertId);
+                });
+            });
+        };
+        
+        // Processamento serial dos clientes para evitar problemas com o banco de dados
+        const processarClientes = async () => {
+            for (const cliente of clientes) {
+                try {
+                    // Verificar se o cliente já existe
+                    const clienteExiste = await verificarCliente(cliente);
+                    
+                    if (clienteExiste) {
+                        // Cliente já existe, incrementar contador de ignorados
+                        resultados.ignorados++;
+                    } else {
+                        // Cliente não existe, tentar inserir
+                        await inserirCliente(cliente);
+                        resultados.inseridos++;
+                    }
+                } catch (error) {
+                    console.error('Erro ao processar cliente:', error);
+                    resultados.erros.push(`Erro ao processar cliente ${cliente.nome_cliente || 'sem nome'}: ${error.message}`);
+                }
+                
+                // Incrementar contador de processados
+                processados++;
+                
+                // Log de progresso a cada 100 clientes
+                if (processados % 100 === 0) {
+                    console.log(`Processados ${processados}/${clientes.length} clientes`);
+                }
+            }
+            
+            console.log('Importação finalizada:', resultados);
+            
+            // Enviar resposta final
+            res.json({
+                sucesso: true,
+                ...resultados
+            });
+        };
+        
+        // Iniciar processamento
+        processarClientes().catch(err => {
+            console.error('Erro no processamento dos clientes:', err);
+            res.status(500).json({
+                sucesso: false,
+                mensagem: 'Erro ao processar a importação',
+                erro: err.message
+            });
+        });
+    });
 
 module.exports = router;

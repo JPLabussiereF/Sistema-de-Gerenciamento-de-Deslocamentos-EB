@@ -604,3 +604,125 @@ body {
         padding-bottom: 12px;
     }
 }
+
+/* Estilo para o botão de importação CSV */
+.import-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.import-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--azul-royal);
+    color: var(--branco);
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 51, 160, 0.2);
+}
+
+.import-button:hover {
+    background-color: var(--azul-escuro);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 51, 160, 0.3);
+}
+
+.import-button svg {
+    stroke: var(--branco);
+}
+
+/* Estilo para o modal de progresso de importação */
+.import-progress-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+.import-progress-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.import-progress-container {
+    background-color: var(--branco);
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    padding: 24px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.import-progress-title {
+    font-size: 18px;
+    color: var(--azul-royal);
+    margin-bottom: 16px;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 8px;
+    background-color: var(--cinza-medio);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: var(--azul-royal);
+    width: 0;
+    transition: width 0.3s;
+}
+
+.import-status {
+    font-size: 14px;
+    color: var(--texto-primario);
+    margin-bottom: 20px;
+}
+
+.import-summary {
+    text-align: left;
+    background-color: var(--cinza-claro);
+    padding: 16px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.import-summary p {
+    margin-bottom: 8px;
+}
+
+.import-done-btn {
+    background-color: var(--azul-royal);
+    color: var(--branco);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.import-done-btn:hover {
+    background-color: var(--azul-escuro);
+}

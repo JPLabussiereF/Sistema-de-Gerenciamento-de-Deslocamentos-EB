@@ -41,9 +41,41 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Inicializar a página
     init();
-    
+    // Função para teste de conexão com o servidor
+    async function testarConexaoServidor() {
+        try {
+            const response = await fetch('http://localhost:3000/api/clientes', {
+                method: 'GET',
+                headers: {
+                    'Authorization': usuarioLogado.id_usuario
+                }
+            });
+            
+            console.log('Teste de conexão:', response.status, response.statusText);
+            const contentType = response.headers.get('content-type');
+            console.log('Tipo de conteúdo:', contentType);
+            
+            if (contentType && contentType.includes('application/json')) {
+                const data = await response.json();
+                console.log('Resposta do servidor:', data);
+                return true;
+            } else {
+                console.error('Resposta não-JSON recebida');
+                return false;
+            }
+        } catch (error) {
+            console.error('Erro ao testar conexão:', error);
+            return false;
+        }
+    }
     // Função de inicialização
     function init() {
+        // Testar a conexão com o servidor antes de tudo
+        testarConexaoServidor().then(conexaoOk => {
+            if (!conexaoOk) {
+                mostrarMensagem('erro', 'Erro de Conexão', 'Não foi possível conectar ao servidor. Verifique se o servidor está rodando corretamente.');
+            }
+        });
         // Carregar dados iniciais
         carregarClientes();
         carregarVendedores();
@@ -53,6 +85,9 @@ document.addEventListener('DOMContentLoaded', function() {
         saveEditBtn.addEventListener('click', salvarAlteracaoVendedor);
         cancelEditBtn.addEventListener('click', fecharModal);
         closeModalBtn.addEventListener('click', fecharModal);
+        // Adicionar evento para importação de CSV
+        document.getElementById('importCsv').addEventListener('change', handleCsvImport);
+        document.getElementById('importDoneBtn').addEventListener('click', fecharModalImportacao);
         
         // Configurar evento para fechar o modal ao clicar fora
         editModal.addEventListener('click', function(e) {
@@ -481,4 +516,313 @@ document.addEventListener('DOMContentLoaded', function() {
             container.classList.remove('fechando');
         }, 300);
     };
+
+    // Função para processar a importação do arquivo CSV
+    async function handleCsvImport(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        if (file.type !== 'text/csv' && !file.name.endsWith('.csv')) {
+            mostrarMensagem('erro', 'Formato Inválido', 'Por favor, selecione um arquivo CSV válido.');
+            event.target.value = '';
+            return;
+        }
+        
+        // Mostrar modal de progresso
+        mostrarModalImportacao();
+        
+        try {
+            // Ler o arquivo CSV
+            const csvData = await lerArquivoCSV(file);
+            
+            // Processar os dados do CSV
+            const todoClientes = processarDadosCSV(csvData);
+            
+            // Dividir em lotes de 1000 clientes
+            const tamanhoDeLote = 1000;
+            const totalLotes = Math.ceil(todoClientes.length / tamanhoDeLote);
+            let importadosTotal = 0;
+            let ignoradosTotal = 0;
+            let errosTotal = [];
+            
+            atualizarStatusImportacao(`Processando ${todoClientes.length} clientes em ${totalLotes} lotes...`, 'processando', 50);
+            
+            // Importar os clientes em lotes
+            for (let i = 0; i < totalLotes; i++) {
+                const inicio = i * tamanhoDeLote;
+                const fim = Math.min((i + 1) * tamanhoDeLote, todoClientes.length);
+                const loteDEClientes = todoClientes.slice(inicio, fim);
+                
+                atualizarStatusImportacao(`Importando lote ${i+1} de ${totalLotes}...`, 'processando', 
+                                        50 + Math.floor((i / totalLotes) * 50));
+                
+                try {
+                    const resultado = await importarClientes(loteDEClientes);
+                    
+                    if (resultado.inseridos) importadosTotal += resultado.inseridos;
+                    if (resultado.ignorados) ignoradosTotal += resultado.ignorados;
+                    if (resultado.erros && resultado.erros.length) errosTotal = errosTotal.concat(resultado.erros);
+                    
+                } catch (error) {
+                    console.error(`Erro ao processar lote ${i+1}:`, error);
+                    errosTotal.push(`Erro no lote ${i+1}: ${error.message}`);
+                }
+            }
+            
+            // Mostrar resultado final
+            atualizarStatusImportacao('Importação concluída com sucesso!', 'sucesso', 100);
+            
+            // Exibir o resumo da importação
+            mostrarResumoImportacao({
+                inseridos: importadosTotal,
+                ignorados: ignoradosTotal,
+                erros: errosTotal
+            });
+            
+            // Recarregar a lista de clientes
+            await carregarClientes();
+            
+        } catch (error) {
+            console.error('Erro na importação:', error);
+            atualizarStatusImportacao('Erro ao processar o arquivo: ' + error.message, 'erro');
+        } finally {
+            // Limpar o input do arquivo para permitir selecionar o mesmo arquivo novamente
+            event.target.value = '';
+        }
+    }
+
+    // Função para ler o arquivo CSV
+    function lerArquivoCSV(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            
+            reader.onload = function(event) {
+                resolve(event.target.result);
+            };
+            
+            reader.onerror = function() {
+                reject(new Error('Erro ao ler o arquivo'));
+            };
+            
+            reader.readAsText(file);
+        });
+    }
+
+    // Função para processar os dados do CSV
+    function processarDadosCSV(csvData) {
+        // Atualizando o status
+        atualizarStatusImportacao('Processando dados do arquivo...', 'processando', 25);
+        
+        // Dividir linhas do CSV
+        const lines = csvData.split('\n').filter(line => line.trim() !== '');
+        const clientes = [];
+        
+        // Processar cada linha
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (!line) continue;
+            
+            // Função para processar linha e extrair os valores considerando strings com vírgulas
+            const valores = parseCsvLine(line);
+            
+            // Se não tiver pelo menos o nome do cliente, ignorar
+            if (valores.length < 2) continue;
+            
+            const cliente = {
+                cod_cliente: valores[0]?.trim() || null,
+                nome_cliente: (valores[1]?.trim() || '').replace(/"/g, ''),
+                cnpj: (valores[2]?.trim() || '').replace(/"/g, '').replace(/[^\d]/g, ''), // Remover caracteres não numéricos
+                logradouro: (valores[3]?.trim() || '').replace(/"/g, ''),
+                bairro: (valores[4]?.trim() || '').replace(/"/g, ''),
+                cep: (valores[5]?.trim() || '').replace(/"/g, '').replace(/[^\d]/g, ''), // Remover caracteres não numéricos
+                cidade: (valores[6]?.trim() || '').replace(/"/g, ''),
+                estado: (valores[7]?.trim() || '').replace(/"/g, '')
+            };
+            
+            // Só adicionar se tiver pelo menos o nome do cliente
+            if (cliente.nome_cliente) {
+                clientes.push(cliente);
+            }
+            
+            // Atualizar a barra de progresso
+            const progresso = 25 + Math.floor((i / lines.length) * 25);
+            if (i % 1000 === 0) {
+                atualizarStatusImportacao(`Processando linha ${i + 1} de ${lines.length}...`, 'processando', progresso);
+            }
+        }
+        
+        return clientes;
+    }
+
+    // Função para processar linha de CSV considerando valores entre aspas
+    function parseCsvLine(line) {
+        const result = [];
+        let current = '';
+        let inQuotes = false;
+        
+        for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+            
+            if (char === '"') {
+                inQuotes = !inQuotes;
+            } else if (char === ',' && !inQuotes) {
+                result.push(current);
+                current = '';
+            } else {
+                current += char;
+            }
+        }
+        
+        // Adicionar o último valor
+        result.push(current);
+        
+        return result;
+    }
+
+    // Função para importar clientes para o banco de dados
+async function importarClientes(clientes) {
+    atualizarStatusImportacao('Verificando dados no servidor...', 'processando', 50);
+    
+    try {
+        // Adicione logs para debug
+        console.log('Enviando dados para o servidor:', JSON.stringify({ clientes }).slice(0, 200) + '...');
+        
+        const response = await fetch('http://localhost:3000/api/clientes/importar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': usuarioLogado.id_usuario
+            },
+            body: JSON.stringify({ clientes })
+        });
+        
+            // Verificar o tipo de conteúdo da resposta
+            const contentType = response.headers.get('content-type');
+            console.log('Tipo de conteúdo da resposta:', contentType);
+            
+            if (!response.ok) {
+                // Verificar o conteúdo da resposta para melhor diagnóstico
+                const responseText = await response.text();
+                console.error('Resposta de erro completa:', responseText);
+                
+                // Tentar analisar como JSON se possível
+                let errorMessage = 'Erro ao importar clientes';
+                try {
+                    if (contentType && contentType.includes('application/json')) {
+                        const errorData = JSON.parse(responseText);
+                        errorMessage = errorData.mensagem || errorMessage;
+                    } else {
+                        errorMessage = `Erro ${response.status}: Resposta não-JSON recebida`;
+                    }
+                } catch (e) {
+                    errorMessage = `Erro ${response.status}: ${responseText.substring(0, 100)}...`;
+                }
+                
+                throw new Error(errorMessage);
+            }
+            
+            // Verificar se a resposta é JSON antes de tentar analisar
+            if (!contentType || !contentType.includes('application/json')) {
+                throw new Error('O servidor não retornou uma resposta JSON válida');
+            }
+            
+            const data = await response.json();
+            
+            // Atualizar o status para concluído
+            atualizarStatusImportacao('Importação concluída com sucesso!', 'sucesso', 100);
+            
+            // Exibir o resumo da importação
+            mostrarResumoImportacao(data);
+            
+            return data;
+            
+        } catch (error) {
+            console.error('Erro na importação:', error);
+            throw error;
+        }
+    }
+
+    // Função para mostrar o modal de importação
+    function mostrarModalImportacao() {
+        const modal = document.getElementById('importProgressModal');
+        const progressBar = document.getElementById('importProgressBar');
+        const importStatus = document.getElementById('importStatus');
+        const importSummary = document.getElementById('importSummary');
+        const importDoneBtn = document.getElementById('importDoneBtn');
+        
+        // Resetar elementos
+        progressBar.style.width = '0';
+        importStatus.textContent = 'Processando arquivo...';
+        importStatus.style.color = 'var(--texto-primario)';
+        importSummary.style.display = 'none';
+        importSummary.innerHTML = '';
+        importDoneBtn.style.display = 'none';
+        
+        // Mostrar o modal
+        modal.style.display = 'flex';
+        setTimeout(() => {
+            modal.classList.add('active');
+        }, 10);
+    }
+
+    // Função para atualizar o status da importação
+    function atualizarStatusImportacao(mensagem, tipo, progresso) {
+        const progressBar = document.getElementById('importProgressBar');
+        const importStatus = document.getElementById('importStatus');
+        
+        importStatus.textContent = mensagem;
+        
+        if (progresso !== undefined) {
+            progressBar.style.width = `${progresso}%`;
+        }
+        
+        if (tipo === 'erro') {
+            importStatus.style.color = 'var(--vermelho-erro)';
+            document.getElementById('importDoneBtn').style.display = 'inline-block';
+        } else if (tipo === 'sucesso') {
+            importStatus.style.color = 'var(--verde-sucesso)';
+        }
+    }
+
+    // Função para mostrar o resumo da importação
+    function mostrarResumoImportacao(data) {
+        const importSummary = document.getElementById('importSummary');
+        const importDoneBtn = document.getElementById('importDoneBtn');
+        
+        // Criar resumo
+        let resumoHTML = '';
+        
+        if (data.inseridos && data.inseridos > 0) {
+            resumoHTML += `<p><strong>Clientes inseridos:</strong> ${data.inseridos}</p>`;
+        }
+        
+        if (data.ignorados && data.ignorados > 0) {
+            resumoHTML += `<p><strong>Clientes ignorados (já existentes):</strong> ${data.ignorados}</p>`;
+        }
+        
+        if (data.erros && data.erros.length > 0) {
+            resumoHTML += `<p><strong>Erros encontrados:</strong></p><ul>`;
+            
+            data.erros.forEach(erro => {
+                resumoHTML += `<li>${erro}</li>`;
+            });
+            
+            resumoHTML += `</ul>`;
+        }
+        
+        // Exibir o resumo
+        importSummary.innerHTML = resumoHTML;
+        importSummary.style.display = 'block';
+        importDoneBtn.style.display = 'inline-block';
+    }
+
+    // Função para fechar o modal de importação
+    function fecharModalImportacao() {
+        const modal = document.getElementById('importProgressModal');
+        modal.classList.remove('active');
+        
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 300);
+    }
 });

@@ -401,3 +401,73 @@ input:-webkit-autofill:active {
         padding: 8px 16px 16px;
     }
 }
+/* Media query para telas pequenas (celulares) */
+@media (max-width: 480px) {
+    .login-card {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 24px 16px;
+    }
+
+    .login-container {
+        padding: 0;
+        background-color: var(--branco);
+    }
+
+    .login-title {
+        font-size: 22px;
+        margin-bottom: 24px;
+    }
+
+    /* Ajuste do tamanho e espaçamento dos inputs para preencher bem o espaço */
+    .input-group {
+        margin-bottom: 24px;
+    }
+
+    .form-input {
+        padding: 14px 12px 6px 40px;
+    }
+
+    /* Ajuste do botão para telas pequenas */
+    .login-button {
+        padding: 14px;
+    }
+
+    /* Ajuste do cabeçalho para telas pequenas */
+    .header {
+        padding: 16px;
+    }
+
+    .logo-container {
+        width: 140px;
+        height: 50px;
+    }
+
+    /* Ajuste do modal de mensagem para telas pequenas */
+    .mensagem-modal-container {
+        width: 100%;
+        max-width: 100%;
+        margin: 0 16px;
+        border-radius: 8px;
+    }
+}
+
+/* Media query para telas médias (tablets) */
+@media (min-width: 481px) and (max-width: 767px) {
+    .login-card {
+        width: 90%;
+        max-width: 480px;
+        padding: 24px;
+    }
+
+    .login-container {
+        padding: 16px;
+    }
+}
+
+/* Animação suave para transições de layout */
+.login-card {
+    transition: width 0.3s ease, max-width 0.3s ease, border-radius 0.3s ease, box-shadow 0.3s ease, padding 0.3s ease;
+}

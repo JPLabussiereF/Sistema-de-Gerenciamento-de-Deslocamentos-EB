@@ -34,19 +34,34 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Adicionar eventos para atualização automática do campo Cliente
     document.getElementById('destino').addEventListener('change', function() {
-        // Se o destino for Casa, Almoço ou EB, preenche automaticamente Cliente como "Sem cliente"
-        if (this.value === 'Casa' || this.value === 'Almoço' || this.value === 'Elétrica Bahiana - EB') {
-            document.getElementById('cliente').value = 'Sem cliente';
-            activateFloatingLabel(document.getElementById('cliente'));
-        } else {
-            // Verificar se o destino selecionado é um cliente e selecionar automaticamente o mesmo cliente
-            const clienteSelecionado = clientesData.find(
-                cliente => cliente.nome === this.value
-            );
+        // Se o destino for Casa, Almoço ou uma das filiais da EB, selecionar a ação correspondente
+        if (this.value === 'Casa' || this.value === 'Almoço' || 
+            this.value.startsWith('Elétrica Bahiana')) {
+            // Encontrar o radio button correspondente
+            let acaoValue = this.value;
             
-            if (clienteSelecionado) {
-                document.getElementById('cliente').value = clienteSelecionado.nome;
-                activateFloatingLabel(document.getElementById('cliente'));
+            // Extrair o nome curto da filial para a ação
+            if (this.value.startsWith('Elétrica Bahiana')) {
+                if (this.value.includes('Lauro')) {
+                    acaoValue = 'EB Lauro';
+                } else if (this.value.includes('Aracaju')) {
+                    acaoValue = 'EB Aracaju';
+                } else if (this.value.includes('Salvador')) {
+                    acaoValue = 'EB Salvador';
+                } else {
+                    acaoValue = 'EB';
+                }
+            }
+            
+            const radioButtons = document.getElementsByName('acao');
+            for (const radioButton of radioButtons) {
+                if (radioButton.value === acaoValue) {
+                    radioButton.checked = true;
+                    // Disparar evento change para atualizar visuais
+                    const event = new Event('change');
+                    radioButton.dispatchEvent(event);
+                    break;
+                }
             }
         }
     });
@@ -77,15 +92,27 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     // Adicionar evento para atualização automática da ação baseada no destino
     document.getElementById('destino').addEventListener('change', function() {
-        // Se o destino for Casa, Almoço ou EB, selecionar a ação correspondente
-        if (this.value === 'Casa' || this.value === 'Almoço' || this.value === 'Elétrica Bahiana - EB') {
-            // Encontrar o radio button correspondente
+        // Se o destino for Casa, Almoço ou qualquer filial da EB, selecionar a ação correspondente
+        if (this.value === 'Casa' || this.value === 'Almoço') {
+            // Caso específico para Casa ou Almoço - usa o mesmo valor
             let acaoValue = this.value;
-            if (this.value === 'Elétrica Bahiana - EB') acaoValue = 'EB';
             
             const radioButtons = document.getElementsByName('acao');
             for (const radioButton of radioButtons) {
                 if (radioButton.value === acaoValue) {
+                    radioButton.checked = true;
+                    // Disparar evento change para atualizar visuais
+                    const event = new Event('change');
+                    radioButton.dispatchEvent(event);
+                    break;
+                }
+            }
+        } 
+        // Para qualquer filial da Elétrica Bahiana, selecionar o radio button "EB"
+        else if (this.value.startsWith('Elétrica Bahiana')) {
+            const radioButtons = document.getElementsByName('acao');
+            for (const radioButton of radioButtons) {
+                if (radioButton.value === 'EB') {
                     radioButton.checked = true;
                     // Disparar evento change para atualizar visuais
                     const event = new Event('change');
@@ -399,8 +426,8 @@ function validarEEnviar() {
         destino !== cliente && 
         destino !== 'Casa' && 
         destino !== 'Almoço' && 
-        destino !== 'Elétrica Bahiana - EB') {
-        mostrarMensagem('erro', 'Dados Inconsistentes', 'O destino deve ser igual ao cliente selecionado, exceto quando for Casa, Almoço ou EB.');
+        !destino.startsWith('Elétrica Bahiana')) {
+        mostrarMensagem('erro', 'Dados Inconsistentes', 'O destino deve ser igual ao cliente selecionado, exceto quando for Casa, Almoço ou Elétrica Bahiana.');
         document.getElementById('destino').focus();
         return;
     }
@@ -408,8 +435,8 @@ function validarEEnviar() {
     // Validar a relação entre destino e ação
     if ((destino === 'Casa' && acao !== 'Casa') || 
         (destino === 'Almoço' && acao !== 'Almoço') || 
-        (destino === 'Elétrica Bahiana - EB' && acao !== 'EB')) {
-        mostrarMensagem('erro', 'Dados Inconsistentes', 'Quando o destino for Casa, Almoço ou EB, a ação do trajeto deve corresponder ao destino.');
+        (destino.startsWith('Elétrica Bahiana') && acao !== 'EB')) {
+        mostrarMensagem('erro', 'Dados Inconsistentes', 'Quando o destino for Casa, Almoço ou Elétrica Bahiana, a ação do trajeto deve corresponder ao destino.');
         return;
     }
     // Validação de valores numéricos para km

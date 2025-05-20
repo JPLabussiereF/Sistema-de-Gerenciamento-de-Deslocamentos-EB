@@ -56,7 +56,9 @@ router.get('/locais', verificarAutenticacao, (req, res) => {
     const locaisFixos = [
         { id: 'casa', nome: 'Casa', endereco_completo: 'Endereço residencial' },
         { id: 'almoco', nome: 'Almoço', endereco_completo: 'Local para refeição' },
-        { id: 'eb', nome: 'Elétrica Bahiana - EB', endereco_completo: 'Sede da empresa' }
+        { id: 'ebssa', nome: 'Elétrica Bahiana - Salvador', endereco_completo: 'Rua Barão de Cotegipe, 269A - Mares, Salvador - BA, 40411-002' },
+        { id: 'eblauro', nome: 'Elétrica Bahiana - Lauro de Freitas', endereco_completo: 'R. Dr. Barreto, 688 - Pitangueiras, Lauro de Freitas - BA, 42701-310' },
+        { id: 'ebaju', nome: 'Elétrica Bahiana - Aracaju', endereco_completo: 'Condomínio Cidade Comercial, n° 1294 - Av. Etelvino Alves de Lima, Loja 07 - Inácio Barbosa, Aracaju - SE, 49040-690' }
     ];
     
     // Buscar endereços dos clientes para complementar as opções

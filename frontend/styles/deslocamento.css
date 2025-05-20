@@ -567,3 +567,66 @@ input[type="number"]::-webkit-inner-spin-button {
         padding: 8px 16px 16px;
     }
 }
+/* Estilização para o campo de endereço informativo */
+.endereco-info-card {
+    background-color: #f8fafc;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 25px;
+    position: relative;
+    border-left: 4px solid var(--azul-royal);
+    box-shadow: 0 2px 8px rgba(0, 51, 160, 0.08);
+    transition: all 0.3s ease;
+}
+
+.endereco-info-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 51, 160, 0.12);
+    transform: translateY(-2px);
+}
+
+.endereco-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.endereco-icon {
+    color: var(--azul-royal);
+    margin-right: 10px;
+    background-color: rgba(0, 51, 160, 0.1);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.endereco-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--azul-royal);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.endereco-content {
+    padding-left: 42px; /* Alinhado com o conteúdo após o ícone */
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--texto-primario);
+    word-wrap: break-word;
+    position: relative;
+}
+
+/* Estilização para mostrar linhas de endereço em formato semelhante a cartão */
+.endereco-content::before {
+    content: "";
+    position: absolute;
+    left: 15px;
+    top: 0;
+    height: 100%;
+    width: 1px;
+    background-color: var(--cinza-medio);
+    opacity: 0.8;
+}

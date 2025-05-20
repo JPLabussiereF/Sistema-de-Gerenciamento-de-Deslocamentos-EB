@@ -90,6 +90,48 @@ document.addEventListener('DOMContentLoaded', function() {
             activateFloatingLabel(document.getElementById('destino'));
         }
     });
+    // Adicionar evento específico para exibir o endereço quando o cliente é selecionado
+    document.getElementById('cliente').addEventListener('change', function() {
+        if (this.value !== 'Sem cliente') {
+            const endereco = getEnderecoCompleto(this.value);
+            if (endereco) {
+                // Mostra o container do endereço
+                document.getElementById('enderecoClienteGroup').style.display = 'block';
+                
+                // Formata o endereço para melhor apresentação, separando por vírgulas
+                const enderecoFormatado = formatarEndereco(endereco);
+                document.getElementById('enderecoCliente').innerHTML = enderecoFormatado;
+                
+                // Efeito de fade-in suave
+                const enderecoCard = document.getElementById('enderecoClienteGroup');
+                enderecoCard.style.opacity = '0';
+                setTimeout(() => {
+                    enderecoCard.style.opacity = '1';
+                }, 50);
+            } else {
+                document.getElementById('enderecoClienteGroup').style.display = 'none';
+            }
+        } else {
+            document.getElementById('enderecoClienteGroup').style.display = 'none';
+        }
+    });
+    
+    // Função auxiliar para formatar endereço com quebras de linha
+    function formatarEndereco(endereco) {
+        // Verifica se o endereço contém vírgulas ou pontos para usar como separadores
+        if (endereco.includes(',')) {
+            // Divide por vírgulas e cria elementos de linha
+            const partes = endereco.split(',').map(parte => parte.trim());
+            return partes.join('<br>');
+        } else if (endereco.includes('.')) {
+            // Alternativa se usar pontos como separadores
+            const partes = endereco.split('.').map(parte => parte.trim()).filter(Boolean);
+            return partes.join('<br>');
+        } else {
+            // Se não houver separadores claros, retorna como está
+            return endereco;
+        }
+    }
     // Adicionar evento para atualização automática da ação baseada no destino
     document.getElementById('destino').addEventListener('change', function() {
         // Se o destino for Casa, Almoço ou qualquer filial da EB, selecionar a ação correspondente
@@ -238,6 +280,30 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     // Marcar explicitamente como uma seleção válida
                     inputField.dataset.validSelection = 'true';
+                    
+                    // Se for o campo cliente, mostrar o endereço com o novo formato
+                    if (fieldId === 'cliente' && option !== 'Sem cliente') {
+                        const endereco = getEnderecoCompleto(option);
+                        if (endereco) {
+                            // Mostra o container do endereço
+                            document.getElementById('enderecoClienteGroup').style.display = 'block';
+                            
+                            // Formata o endereço com quebras de linha
+                            const enderecoFormatado = formatarEndereco(endereco);
+                            document.getElementById('enderecoCliente').innerHTML = enderecoFormatado;
+                            
+                            // Efeito de fade-in suave
+                            const enderecoCard = document.getElementById('enderecoClienteGroup');
+                            enderecoCard.style.opacity = '0';
+                            setTimeout(() => {
+                                enderecoCard.style.opacity = '1';
+                            }, 50);
+                        } else {
+                            document.getElementById('enderecoClienteGroup').style.display = 'none';
+                        }
+                    } else if (fieldId === 'cliente' && option === 'Sem cliente') {
+                        document.getElementById('enderecoClienteGroup').style.display = 'none';
+                    }
                     
                     // Disparar evento de mudança para acionar outros comportamentos
                     const event = new Event('change');
@@ -659,6 +725,9 @@ function resetForm() {
     
     // Ativar apenas o label da data e hora, já que este campo sempre terá valor
     activateFloatingLabel(document.getElementById('dataHora'));
+
+    document.getElementById('enderecoClienteGroup').style.display = 'none';
+    document.getElementById('enderecoCliente').textContent = '';
 }
 
 // Função para ativar a label flutuante

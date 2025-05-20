@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const localOptionsFixas = ['Casa', 'Almoço', 'Elétrica Bahiana - EB'];
     const clienteOptionsFixas = ['Sem cliente'];
     
+    // Verificar status de envios ao carregar a página
+    verificarStatusEnvios();
     // Buscar dados do servidor
     fetchOpcoesAutocomplete();
     
@@ -26,6 +28,30 @@ document.addEventListener('DOMContentLoaded', function() {
     // Verificar e atualizar as labels dos campos que já possuem valores
     checkInputsWithValues();
     
+    // Função para verificar quantos formulários o usuário já enviou hoje
+    function verificarStatusEnvios() {
+        const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado')) || {};
+        
+        fetch(`http://localhost:3000/api/deslocamentos/status-envios?userId=${usuarioLogado.id_usuario}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.sucesso) {
+                    // Atualizar contador na interface
+                    atualizarContadorEnvios(data.totalEnvios, data.limite);
+                    
+                    // Desabilitar o botão se o limite foi atingido
+                    const btnEnviar = document.getElementById('btnEnviar');
+                    if (!data.disponivel) {
+                        btnEnviar.disabled = true;
+                        btnEnviar.innerHTML = 'Limite diário atingido';
+                        mostrarMensagem('erro', 'Limite Atingido', `Você atingiu o limite de ${data.limite} formulários por dia. Tente novamente amanhã.`);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao verificar status de envios:', error);
+            });
+    }
     // Botão de enviar formulário
     document.getElementById('btnEnviar').addEventListener('click', function(e) {
         e.preventDefault();
@@ -90,6 +116,83 @@ document.addEventListener('DOMContentLoaded', function() {
             activateFloatingLabel(document.getElementById('destino'));
         }
     });
+    function atualizarContadorEnvios(enviosRealizados, limiteMaximo) {
+        // Verificar se o contador já existe, senão criar
+        let contadorEl = document.getElementById('contadorEnvios');
+        if (!contadorEl) {
+            const formCard = document.querySelector('.form-card');
+            
+            // Criar o contador no topo do formulário
+            contadorEl = document.createElement('div');
+            contadorEl.id = 'contadorEnvios';
+            contadorEl.className = 'contador-envios';
+            
+            // Inserir no início do formulário, após o título
+            const titulo = document.querySelector('.form-title');
+            titulo.insertAdjacentElement('afterend', contadorEl);
+            
+            // Adicionar estilos CSS inline para o contador
+            const style = document.createElement('style');
+            style.textContent = `
+                .contador-envios {
+                    background-color: var(--azul-royal-claro, #E6F0FF);
+                    color: var(--azul-royal, #0033A0);
+                    padding: 8px 12px;
+                    border-radius: 6px;
+                    margin-bottom: 16px;
+                    font-size: 14px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                }
+                .contador-progresso {
+                    height: 6px;
+                    background-color: #e0e0e0;
+                    border-radius: 3px;
+                    width: 100%;
+                    margin-top: 6px;
+                    overflow: hidden;
+                }
+                .contador-barra {
+                    height: 100%;
+                    background-color: var(--azul-royal, #0033A0);
+                    border-radius: 3px;
+                    transition: width 0.3s ease;
+                }
+                .contador-alerta {
+                    background-color: #FFF3CD;
+                    color: #856404;
+                }
+                .contador-perigo {
+                    background-color: #F8D7DA;
+                    color: #721C24;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        // Calcular porcentagem para a barra de progresso
+        const porcentagem = (enviosRealizados / limiteMaximo) * 100;
+        
+        // Determinar a classe de alerta baseada no progresso
+        let classeAlerta = '';
+        if (porcentagem > 75) {
+            classeAlerta = 'contador-perigo';
+        } else if (porcentagem > 50) {
+            classeAlerta = 'contador-alerta';
+        }
+        
+        // Atualizar o conteúdo do contador
+        contadorEl.className = `contador-envios ${classeAlerta}`;
+        contadorEl.innerHTML = `
+            <div>
+                <strong>Formulários enviados hoje:</strong> ${enviosRealizados} de ${limiteMaximo} 
+                <div class="contador-progresso">
+                    <div class="contador-barra" style="width: ${porcentagem}%"></div>
+                </div>
+            </div>
+        `;
+    }
     // Adicionar evento específico para exibir o endereço quando o cliente é selecionado
     document.getElementById('cliente').addEventListener('change', function() {
         if (this.value !== 'Sem cliente') {
@@ -274,10 +377,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     const placeHolderSpan = document.createElement('span');
                     placeHolderSpan.className = 'dropdown-item-endereco';
                     placeHolderSpan.textContent = 'Opte por esta alternativa caso a realização da ação \'Visita\' não ocorra.';
-                    placeHolderSpan.style.opacity = '0.7'; // Tornar visível mas sutil
+                    placeHolderSpan.style.opacity = '0.7'; 
+                    placeHolderSpan.style.fontStyle = 'italic'; // Adicionar estilo itálico
+                    placeHolderSpan.style.color = 'color: rgb(0 0 0);'; // Cor mais escura para melhor legibilidade
                     item.appendChild(placeHolderSpan);
                 }
-                
                 item.addEventListener('click', function() {
                     inputField.value = option;
                     dropdownList.style.display = 'none';
@@ -619,6 +723,18 @@ function validarEEnviar() {
     .then(data => {
         if (data.sucesso) {
             mostrarMensagem('sucesso', 'Registro Concluído', 'Deslocamento registrado com sucesso!');
+            
+            // Atualizar o contador após envio bem-sucedido
+            if (data.totalEnvios !== undefined && data.limite !== undefined) {
+                atualizarContadorEnvios(data.totalEnvios, data.limite);
+                
+                // Desabilitar o botão se atingiu o limite
+                if (data.totalEnvios >= data.limite) {
+                    document.getElementById('btnEnviar').disabled = true;
+                    document.getElementById('btnEnviar').innerHTML = 'Limite diário atingido';
+                }
+            }
+            
             resetForm();
         } else {
             mostrarMensagem('erro', 'Erro no Sistema', data.mensagem || 'Erro ao tentar registrar o deslocamento.');

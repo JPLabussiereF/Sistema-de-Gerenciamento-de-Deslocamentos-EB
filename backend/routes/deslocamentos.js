@@ -5,21 +5,27 @@ const db = require('../db');
 
 // Middleware para verificar autenticação (sem alterações)
 const verificarAutenticacao = (req, res, next) => {
-    // Mesmo código...
-    if (!req.headers.authorization && !req.body.usuario_id) {
+    const hasAuthHeader = req.headers.authorization;
+    const hasUserId = req.body && req.body.usuario_id;
+    const hasQueryUserId = req.query && req.query.userId;
+    
+    if (!hasAuthHeader && !hasUserId && !hasQueryUserId) {
         return res.status(401).json({ 
             sucesso: false,
             mensagem: 'Usuário não autenticado' 
         });
     }
     
-    const userId = req.body.usuario_id || req.headers.authorization;
+    const userId = hasUserId ? req.body.usuario_id : 
+                  hasQueryUserId ? req.query.userId : 
+                  req.headers.authorization;
+    
     req.userId = userId;
     next();
 };
 
 // Rota para registrar um novo deslocamento - com cod_cliente
-router.post('/', verificarAutenticacao, (req, res) => {
+router.post('/', verificarAutenticacao, verificarLimiteEnvios, (req, res) => {
     const {
         origem_nome,
         destino_nome,
@@ -93,9 +99,12 @@ router.post('/', verificarAutenticacao, (req, res) => {
         res.status(201).json({
             sucesso: true,
             mensagem: 'Deslocamento registrado com sucesso',
-            id: result.insertId
+            id: result.insertId,
+            totalEnvios: req.totalEnviosDiarios + 1,
+            limite: req.limiteDiario
         });
     });
+    
 });
 
 // Rota para listar deslocamentos do usuário - incluindo cod_cliente
@@ -137,6 +146,81 @@ router.get('/', verificarAutenticacao, (req, res) => {
         res.json({
             sucesso: true,
             deslocamentos: results
+        });
+    });
+});
+function verificarLimiteEnvios(req, res, next) {
+    const userId = req.userId;
+    const dataAtual = new Date().toISOString().split('T')[0]; // formato YYYY-MM-DD
+    
+    // Definir o limite máximo de formulários por dia
+    const LIMITE_DIARIO = 50;
+    
+    const query = `
+        SELECT COUNT(*) as total 
+        FROM formulario_deslocamento 
+        WHERE id_usuario = ? 
+        AND DATE(data_hora_registrado) = ?
+    `;
+    
+    db.query(query, [userId, dataAtual], (err, results) => {
+        if (err) {
+            console.error('Erro ao verificar limite de envios:', err);
+            return res.status(500).json({
+                sucesso: false,
+                mensagem: 'Erro ao verificar limite de envios'
+            });
+        }
+        
+        const totalEnvios = results[0].total;
+        
+        // Adicionar contagem à requisição para uso posterior
+        req.totalEnviosDiarios = totalEnvios;
+        req.limiteDiario = LIMITE_DIARIO;
+        
+        // Verificar se o limite foi atingido
+        if (totalEnvios >= LIMITE_DIARIO) {
+            return res.status(429).json({
+                sucesso: false,
+                mensagem: 'Limite diário de envios atingido',
+                totalEnvios: totalEnvios,
+                limite: LIMITE_DIARIO
+            });
+        }
+        
+        next();
+    });
+}
+router.get('/status-envios', verificarAutenticacao, (req, res) => {
+    const userId = req.userId;
+    const dataAtual = new Date().toISOString().split('T')[0]; // formato YYYY-MM-DD
+    
+    // Definir o limite máximo de formulários por dia (mesmo valor usado no middleware)
+    const LIMITE_DIARIO = 50;
+    
+    const query = `
+        SELECT COUNT(*) as total 
+        FROM formulario_deslocamento 
+        WHERE id_usuario = ? 
+        AND DATE(data_hora_registrado) = ?
+    `;
+    
+    db.query(query, [userId, dataAtual], (err, results) => {
+        if (err) {
+            console.error('Erro ao verificar limite de envios:', err);
+            return res.status(500).json({
+                sucesso: false,
+                mensagem: 'Erro ao verificar limite de envios'
+            });
+        }
+        
+        const totalEnvios = results[0].total;
+        
+        res.json({
+            sucesso: true,
+            totalEnvios: totalEnvios,
+            limite: LIMITE_DIARIO,
+            disponivel: totalEnvios < LIMITE_DIARIO
         });
     });
 });

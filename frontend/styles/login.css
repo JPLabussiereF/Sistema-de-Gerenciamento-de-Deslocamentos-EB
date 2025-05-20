@@ -40,15 +40,14 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: rgba(255, 255, 255, 0.2);
     border-radius: 8px;
     padding: 10px;
     overflow: hidden;
 }
 
 .logo-image {
-    max-width: 110%;
-    max-height: 110%;
+    max-width: 120%;
+    max-height: 120%;
     object-fit: contain;
 }
 

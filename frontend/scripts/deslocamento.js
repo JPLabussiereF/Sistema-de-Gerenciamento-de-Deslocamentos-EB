@@ -180,7 +180,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if (clientesResult.clientes && Array.isArray(clientesResult.clientes)) {
                 clientesData = clientesResult.clientes;
                 
-                // Configurar autocomplete para cliente com dados do servidor
+                // Verificar se cada cliente tem cod_cliente, se não, logar aviso
+                clientesData.forEach(cliente => {
+                    if (cliente.nome !== 'Sem cliente' && !cliente.cod_cliente) {
+                        console.warn(`Cliente "${cliente.nome}" não possui código de cliente definido.`);
+                    }
+                });
+
+                    // Configurar autocomplete para cliente com dados do servidor
                 setupAutocomplete('cliente', [
                     'Sem cliente', 
                     ...clientesData.map(cliente => cliente.nome)
@@ -402,23 +409,32 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     }
 
-// Função para obter o endereço completo de um cliente ou local
-function getEnderecoCompleto(nome) {
-    // Verificar nos clientes
-    const clienteEncontrado = clientesData.find(cliente => cliente.nome === nome);
-    if (clienteEncontrado) {
-        return clienteEncontrado.endereco_completo;
+    // Função para obter o endereço completo de um cliente ou local
+    function getEnderecoCompleto(nome) {
+        // Verificar nos clientes
+        const clienteEncontrado = clientesData.find(cliente => cliente.nome === nome);
+        if (clienteEncontrado) {
+            return clienteEncontrado.endereco_completo;
+        }
+        
+        // Verificar nos locais
+        const localEncontrado = locaisData.find(local => local.nome === nome);
+        if (localEncontrado) {
+            return localEncontrado.endereco_completo;
+        }
+        
+        return null;
+    }   
+    // Função para obter o código do cliente pelo nome
+    function getCodClientePorNome(nomeCliente) {
+        // Se for "Sem cliente", retornar null
+        if (nomeCliente === 'Sem cliente') {
+            return null;
+        }
+        
+        const clienteEncontrado = clientesData.find(c => c.nome === nomeCliente);
+        return clienteEncontrado ? clienteEncontrado.cod_cliente : null;
     }
-    
-    // Verificar nos locais
-    const localEncontrado = locaisData.find(local => local.nome === nome);
-    if (localEncontrado) {
-        return localEncontrado.endereco_completo;
-    }
-    
-    return null;
-}
-
 // Função para validar e enviar o formulário - com mensagens modais
 function validarEEnviar() {
     const origem = document.getElementById('origem').value.trim();
@@ -555,13 +571,14 @@ function validarEEnviar() {
         return;
     }
     
-    // Recuperar IDs dos objetos selecionados
+    // Recuperar IDs e código dos objetos selecionados
     const clienteId = getIdPorNome(cliente, 'cliente');
-    
+    const codCliente = getCodClientePorNome(cliente);
+
     // Encontrar cliente/local associado à origem e destino
     const origemId = getIdPorNome(origem, 'local');
     const destinoId = getIdPorNome(destino, 'local');
-    
+
     // Preparação dos dados para envio
     const dadosDeslocamento = {
         origem_id: origemId,
@@ -570,6 +587,7 @@ function validarEEnviar() {
         destino_nome: destino,
         cliente_id: clienteId,
         cliente_nome: cliente,
+        cod_cliente: codCliente,
         dataHora,
         kmInicio: kmInicioNum,
         kmFinal: kmFinalNum,

@@ -27,6 +27,7 @@ router.get('/clientes', verificarAutenticacao, (req, res) => {
         SELECT 
             id_cliente, 
             nome_cliente AS nome, 
+            cod_cliente,
             CONCAT_WS(', ', logradouro, CONCAT('Nº ', numero), complemento, bairro, cep, cidade, estado) AS endereco_completo 
         FROM 
             cliente 

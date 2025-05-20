@@ -3,9 +3,9 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
-// Middleware para verificar autenticação
+// Middleware para verificar autenticação (sem alterações)
 const verificarAutenticacao = (req, res, next) => {
-    // Verificar se existe um usuário na sessão
+    // Mesmo código...
     if (!req.headers.authorization && !req.body.usuario_id) {
         return res.status(401).json({ 
             sucesso: false,
@@ -13,20 +13,19 @@ const verificarAutenticacao = (req, res, next) => {
         });
     }
     
-    // Para fins de desenvolvimento/teste, permitimos passar o ID do usuário no corpo da requisição
-    // Em produção, você deve usar um token JWT ou sessão
     const userId = req.body.usuario_id || req.headers.authorization;
     req.userId = userId;
     next();
 };
 
-// Rota para registrar um novo deslocamento
+// Rota para registrar um novo deslocamento - com cod_cliente
 router.post('/', verificarAutenticacao, (req, res) => {
     const {
         origem_nome,
         destino_nome,
         cliente_nome,
         cliente_id,
+        cod_cliente, // Adicionando o novo campo
         dataHora,
         kmInicio,
         kmFinal,
@@ -55,20 +54,24 @@ router.post('/', verificarAutenticacao, (req, res) => {
 
     // Verificar se o cliente_id é válido
     let finalClienteId = null;
+    let finalCodCliente = null;
+    
     if (cliente_nome !== 'Sem cliente') {
         finalClienteId = cliente_id;
+        finalCodCliente = cod_cliente;
     }
 
-    // SQL para inserir os dados
+    // SQL para inserir os dados - incluindo cod_cliente
     const query = `
         INSERT INTO formulario_deslocamento 
-        (id_usuario, id_cliente, origem, destino, km_inicio, km_final, acao_trajeto, data_hora_registrado)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        (id_usuario, id_cliente, cod_cliente, origem, destino, km_inicio, km_final, acao_trajeto, data_hora_registrado)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     const values = [
         usuario_id,
         finalClienteId,
+        finalCodCliente, // Adicionando o cod_cliente
         origem_nome,
         destino_nome,
         kmInicio,
@@ -95,7 +98,7 @@ router.post('/', verificarAutenticacao, (req, res) => {
     });
 });
 
-// Rota para listar deslocamentos do usuário
+// Rota para listar deslocamentos do usuário - incluindo cod_cliente
 router.get('/', verificarAutenticacao, (req, res) => {
     const userId = req.userId;
     
@@ -109,7 +112,8 @@ router.get('/', verificarAutenticacao, (req, res) => {
             fd.distancia,
             fd.acao_trajeto,
             fd.data_hora_registrado,
-            c.nome_cliente
+            c.nome_cliente,
+            fd.cod_cliente
         FROM 
             formulario_deslocamento fd
         LEFT JOIN

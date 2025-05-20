@@ -162,7 +162,18 @@ document.addEventListener('DOMContentLoaded', function() {
         clientesPaginados.forEach((cliente) => {
             const tr = document.createElement('tr');
             
-            // Coluna de edição (botão com ícone de lápis)
+            const tdCodigo = document.createElement('td');
+            tdCodigo.textContent = cliente.cod_cliente || '-';
+            tr.appendChild(tdCodigo);
+            
+            const tdNome = document.createElement('td');
+            tdNome.textContent = cliente.nome_cliente;
+            tr.appendChild(tdNome);
+            
+            const tdVendedor = document.createElement('td');
+            tdVendedor.textContent = cliente.vendedor_nome || 'Não atribuído';
+            tr.appendChild(tdVendedor);
+            
             const tdEdit = document.createElement('td');
             tdEdit.className = 'action-column';
             const editButton = document.createElement('button');
@@ -176,21 +187,6 @@ document.addEventListener('DOMContentLoaded', function() {
             editButton.addEventListener('click', () => abrirModalEdicao(cliente));
             tdEdit.appendChild(editButton);
             tr.appendChild(tdEdit);
-            
-            // Código do cliente
-            const tdCodigo = document.createElement('td');
-            tdCodigo.textContent = cliente.cod_cliente || '-';
-            tr.appendChild(tdCodigo);
-            
-            // Nome do cliente
-            const tdNome = document.createElement('td');
-            tdNome.textContent = cliente.nome_cliente;
-            tr.appendChild(tdNome);
-            
-            // Vendedor responsável
-            const tdVendedor = document.createElement('td');
-            tdVendedor.textContent = cliente.vendedor_nome || 'Não atribuído';
-            tr.appendChild(tdVendedor);
             
             clientsTableBody.appendChild(tr);
         });

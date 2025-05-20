@@ -1,62 +1,7 @@
-/* Variáveis de Cor baseadas nos arquivos de referência */
-:root {
-    --azul-royal: #0033A0;
-    --azul-claro: #3366CC;
-    --azul-escuro: #001F5B;
-    --branco: #FFFFFF;
-    --cinza-claro: #f2f2f2;
-    --cinza-medio: #E2E8F0;
-    --cinza-escuro: #718096;
-    --texto-primario: #172B4D;
-    --verde-sucesso: #10b981;
-    --verde-sucesso-escuro: #059669;
-    --vermelho-erro: #ef4444;
-    --vermelho-erro-escuro: #dc2626;
-    --amarelo-aviso: #f59e0b;
-    --amarelo-aviso-escuro: #d97706;
-    --roxo-destaque: #7e57c2;
-    --roxo-destaque-escuro: #5e35b1;
-}
+/* Importa os estilos comuns */
+@import url('common.css');
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-body {
-    background-color: var(--cinza-claro);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-/* Header estilizado como o arquivo de referência */
-.header {
-    background-color: var(--azul-royal);
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.logo-container {
-    width: 160px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    padding: 10px;
-    overflow: hidden;
-}
-
-.logo-image {
-    max-width: 120%;
-    max-height: 120%;
-    object-fit: contain;
-}
+/* Estilos específicos para a página de gerenciamento de clientes */
 
 /* Container principal */
 .container {
@@ -78,7 +23,6 @@ body {
     transition: transform 0.3s, opacity 0.3s;
     opacity: 1;
     margin: 0 auto;
-    /* Centraliza horizontalmente */
 }
 
 .content-title {
@@ -148,7 +92,6 @@ body {
     text-align: center;
     border-bottom: 1px solid var(--cinza-medio);
 }
-
 
 .clients-table th {
     background-color: var(--azul-royal);
@@ -345,17 +288,6 @@ body {
     margin-bottom: 0;
 }
 
-.input-group {
-    margin-bottom: 20px;
-}
-
-.input-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-    color: var(--texto-primario);
-}
-
 .select-input {
     width: 100%;
     padding: 12px;
@@ -411,215 +343,6 @@ body {
 
 .save-button:hover {
     background-color: var(--azul-escuro);
-}
-
-/* Modal de mensagem */
-.mensagem-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
-    padding: 20px;
-}
-
-.mensagem-modal-container {
-    background-color: var(--branco);
-    border-radius: 12px;
-    width: 100%;
-    max-width: 400px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    overflow: hidden;
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
-    transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.mensagem-modal-container.ativo {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-}
-
-.mensagem-modal-container.fechando {
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
-}
-
-.mensagem-modal-header {
-    display: flex;
-    align-items: center;
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--cinza-medio);
-    position: relative;
-}
-
-.mensagem-sucesso .mensagem-modal-header {
-    background-color: rgba(16, 185, 129, 0.1);
-    color: var(--verde-sucesso);
-}
-
-.mensagem-erro .mensagem-modal-header {
-    background-color: rgba(239, 68, 68, 0.1);
-    color: var(--vermelho-erro);
-}
-
-.mensagem-modal-icone {
-    margin-right: 12px;
-    display: flex;
-    align-items: center;
-}
-
-.mensagem-sucesso .mensagem-modal-icone svg {
-    stroke: var(--verde-sucesso);
-}
-
-.mensagem-erro .mensagem-modal-icone svg {
-    stroke: var(--vermelho-erro);
-}
-
-.mensagem-modal-titulo {
-    font-size: 18px;
-    font-weight: 600;
-    flex-grow: 1;
-    margin: 0;
-}
-
-.mensagem-modal-fechar-x {
-    background: none;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px;
-    border-radius: 50%;
-    transition: background-color 0.2s;
-}
-
-.mensagem-sucesso .mensagem-modal-fechar-x svg {
-    stroke: var(--verde-sucesso);
-}
-
-.mensagem-erro .mensagem-modal-fechar-x svg {
-    stroke: var(--vermelho-erro);
-}
-
-.mensagem-modal-fechar-x:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-}
-
-.mensagem-modal-body {
-    padding: 20px;
-    font-size: 16px;
-    color: var(--texto-primario);
-    line-height: 1.5;
-}
-
-.mensagem-modal-footer {
-    padding: 12px 20px 20px;
-    display: flex;
-    justify-content: center;
-}
-
-.mensagem-modal-btn-fechar {
-    background-color: var(--azul-royal);
-    color: var(--branco);
-    border: none;
-    border-radius: 6px;
-    padding: 10px 24px;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-}
-
-.mensagem-modal-btn-fechar:hover {
-    background-color: var(--azul-escuro);
-    transform: translateY(-2px);
-}
-
-.mensagem-modal-btn-fechar:active {
-    transform: translateY(0);
-}
-
-.mensagem-sucesso .mensagem-modal-btn-fechar {
-    background-color: var(--verde-sucesso);
-}
-
-.mensagem-sucesso .mensagem-modal-btn-fechar:hover {
-    background-color: var(--verde-sucesso-escuro);
-}
-
-.mensagem-erro .mensagem-modal-btn-fechar {
-    background-color: var(--vermelho-erro);
-}
-
-.mensagem-erro .mensagem-modal-btn-fechar:hover {
-    background-color: var(--vermelho-erro-escuro);
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
-    .content-card {
-        padding: 20px;
-        max-width: 95%;
-        /* Reduz ligeiramente a largura máxima */
-    }
-
-    .clients-table th,
-    .clients-table td {
-        padding: 10px 12px;
-        font-size: 14px;
-    }
-
-    .content-title {
-        font-size: 20px;
-    }
-}
-
-/* Ajustes para telas de celular */
-@media (max-width: 480px) {
-    .container {
-        padding: 1px;
-    }
-
-    .content-card {
-        padding: 16px;
-        border-radius: 8px;
-        max-width: 100%;
-        /* Largura total para celulares */
-        margin: 0 auto;
-        box-shadow: 0 4px 12px rgba(0, 51, 160, 0.12);
-    }
-
-    .clients-table th,
-    .clients-table td {
-        padding: 8px 10px;
-        font-size: 13px;
-    }
-
-    .modal-container {
-        width: 100%;
-    }
-
-    .content-title {
-        font-size: 18px;
-        margin-bottom: 16px;
-        padding-bottom: 12px;
-    }
-
-    /* Melhora a visualização da tabela em telas pequenas */
-    .table-container {
-        margin-left: -16px;
-        margin-right: -16px;
-        width: calc(100% + 32px);
-        border-radius: 0;
-    }
 }
 
 /* Estilo para o botão de importação CSV */
@@ -742,4 +465,61 @@ body {
 
 .import-done-btn:hover {
     background-color: var(--azul-escuro);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .content-card {
+        padding: 20px;
+        max-width: 95%;
+    }
+
+    .clients-table th,
+    .clients-table td {
+        padding: 10px 12px;
+        font-size: 14px;
+    }
+
+    .content-title {
+        font-size: 20px;
+    }
+}
+
+/* Ajustes para telas de celular */
+@media (max-width: 480px) {
+    .container {
+        padding: 1px;
+    }
+
+    .content-card {
+        padding: 16px;
+        border-radius: 8px;
+        max-width: 100%;
+        margin: 0 auto;
+        box-shadow: 0 4px 12px rgba(0, 51, 160, 0.12);
+    }
+
+    .clients-table th,
+    .clients-table td {
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+
+    .modal-container {
+        width: 100%;
+    }
+
+    .content-title {
+        font-size: 18px;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+    }
+
+    /* Melhora a visualização da tabela em telas pequenas */
+    .table-container {
+        margin-left: -16px;
+        margin-right: -16px;
+        width: calc(100% + 32px);
+        border-radius: 0;
+    }
 }

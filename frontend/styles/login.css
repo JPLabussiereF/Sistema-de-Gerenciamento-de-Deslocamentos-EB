@@ -1,54 +1,9 @@
-:root {
-    --azul-royal: #0033A0;
-    --azul-claro: #3366CC;
-    --azul-escuro: #001F5B;
-    --branco: #FFFFFF;
-    --cinza-claro: #f2f2f2;
-    --cinza-medio: #E2E8F0;
-    --texto-primario: #172B4D;
-    --verde-sucesso: #10b981;
-    --verde-sucesso-escuro: #059669;
-    --vermelho-erro: #ef4444;
-    --vermelho-erro-escuro: #dc2626;
-}
+/* Importa os estilos comuns */
+@import url('common.css');
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
+/* Estilos específicos para a página de login */
 body {
     background-color: var(--branco);
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-.header {
-    background-color: var(--azul-royal);
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.logo-container {
-    width: 160px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    padding: 10px;
-    overflow: hidden;
-}
-
-.logo-image {
-    max-width: 120%;
-    max-height: 120%;
-    object-fit: contain;
 }
 
 .login-container {
@@ -85,80 +40,6 @@ body {
     font-weight: 600;
 }
 
-/* Estilo para a label flutuante */
-.input-group {
-    position: relative;
-    margin-bottom: 28px;
-}
-
-.input-icon {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--azul-claro);
-    z-index: 2;
-}
-
-.form-label {
-    position: absolute;
-    left: 40px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #777;
-    transition: all 0.3s;
-    pointer-events: none;
-    font-size: 16px;
-    z-index: 1;
-    padding: 0 4px;
-    background-color: transparent;
-}
-
-.form-input {
-    width: 100%;
-    padding: 16px 12px 8px 40px;
-    /* Padding à esquerda para acomodar o ícone */
-    border: none;
-    font-size: 16px;
-    transition: all 0.3s;
-    background-color: transparent;
-    z-index: 1;
-    border-bottom: 1px solid #ddd;
-    border-radius: 0;
-}
-
-.form-input:focus {
-    outline: none;
-    border-color: transparent;
-}
-
-.form-border {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 1px;
-    width: 100%;
-    background-color: #ddd;
-}
-
-.form-input:focus~.form-border,
-.form-input:not(:placeholder-shown)~.form-border {
-    height: 2px;
-    background-color: var(--azul-royal);
-}
-
-.form-input:focus~.form-label,
-.form-input:not(:placeholder-shown)~.form-label,
-.form-label.active {
-    top: 0;
-    left: 12px;
-    font-size: 12px;
-    color: var(--azul-royal);
-    font-weight: 500;
-    background-color: var(--branco);
-    z-index: 3;
-}
-
 /* Estilos específicos para autofill */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
@@ -167,7 +48,6 @@ input:-webkit-autofill:active {
     -webkit-box-shadow: 0 0 0 30px white inset !important;
     -webkit-text-fill-color: inherit !important;
     transition: background-color 5000s ease-in-out 0s;
-    /* Longa duração para manter a cor */
 }
 
 .form-input:-webkit-autofill+.input-icon {
@@ -188,220 +68,14 @@ input:-webkit-autofill:active {
     color: var(--azul-royal);
 }
 
-.login-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--azul-royal);
-    color: var(--branco);
-    border: none;
-    border-radius: 6px;
-    padding: 16px;
-    width: 100%;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 4px 8px rgba(0, 51, 160, 0.2);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.login-button:hover {
-    background-color: var(--azul-escuro);
-    box-shadow: 0 6px 12px rgba(0, 51, 160, 0.3);
-    transform: translateY(-2px);
-}
-
-.login-button:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 51, 160, 0.2);
-}
-
-.footer {
-    background-color: var(--azul-escuro);
-    color: var(--branco);
-    text-align: center;
-    padding: 16px;
-    font-size: 14px;
-}
-
+/* Responsividade específica */
 @media (min-width: 768px) {
     .login-card {
         max-width: 400px;
         padding: 32px;
     }
 }
-/* Modal de Mensagem */
-.mensagem-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
-    padding: 20px;
-}
 
-.mensagem-modal-container {
-    background-color: var(--branco);
-    border-radius: 12px;
-    width: 100%;
-    max-width: 400px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    overflow: hidden;
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
-    transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.mensagem-modal-container.ativo {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-}
-
-.mensagem-modal-container.fechando {
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
-}
-
-.mensagem-modal-header {
-    display: flex;
-    align-items: center;
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--cinza-medio);
-    position: relative;
-}
-
-.mensagem-sucesso .mensagem-modal-header {
-    background-color: rgba(16, 185, 129, 0.1);
-    color: var(--verde-sucesso);
-}
-
-.mensagem-erro .mensagem-modal-header {
-    background-color: rgba(239, 68, 68, 0.1);
-    color: var(--vermelho-erro);
-}
-
-.mensagem-modal-icone {
-    margin-right: 12px;
-    display: flex;
-    align-items: center;
-}
-
-.mensagem-sucesso .mensagem-modal-icone svg {
-    stroke: var(--verde-sucesso);
-}
-
-.mensagem-erro .mensagem-modal-icone svg {
-    stroke: var(--vermelho-erro);
-}
-
-.mensagem-modal-titulo {
-    font-size: 18px;
-    font-weight: 600;
-    flex-grow: 1;
-    margin: 0;
-}
-
-.mensagem-modal-fechar-x {
-    background: none;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px;
-    border-radius: 50%;
-    transition: background-color 0.2s;
-}
-
-.mensagem-sucesso .mensagem-modal-fechar-x svg {
-    stroke: #10b981;
-}
-
-.mensagem-erro .mensagem-modal-fechar-x svg {
-    stroke: #ef4444;
-}
-
-.mensagem-modal-fechar-x:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-}
-
-.mensagem-modal-body {
-    padding: 20px;
-    font-size: 16px;
-    color: var(--texto-primario);
-    line-height: 1.5;
-}
-
-.mensagem-modal-footer {
-    padding: 12px 20px 20px;
-    display: flex;
-    justify-content: center;
-}
-
-.mensagem-modal-btn-fechar {
-    background-color: var(--azul-royal);
-    color: var(--branco);
-    border: none;
-    border-radius: 6px;
-    padding: 10px 24px;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-}
-
-.mensagem-modal-btn-fechar:hover {
-    background-color: var(--azul-escuro);
-    transform: translateY(-2px);
-}
-
-.mensagem-modal-btn-fechar:active {
-    transform: translateY(0);
-}
-
-.mensagem-sucesso .mensagem-modal-btn-fechar {
-    background-color: #10b981;
-}
-
-.mensagem-sucesso .mensagem-modal-btn-fechar:hover {
-    background-color: #059669;
-}
-
-.mensagem-erro .mensagem-modal-btn-fechar {
-    background-color: #ef4444;
-}
-
-.mensagem-erro .mensagem-modal-btn-fechar:hover {
-    background-color: #dc2626;
-}
-
-/* Responsividade */
-@media (max-width: 600px) {
-    .mensagem-modal-container {
-        max-width: 320px;
-    }
-
-    .mensagem-modal-header {
-        padding: 12px 16px;
-    }
-
-    .mensagem-modal-body {
-        padding: 16px;
-        font-size: 15px;
-    }
-
-    .mensagem-modal-footer {
-        padding: 8px 16px 16px;
-    }
-}
-/* Media query para telas pequenas (celulares) */
 @media (max-width: 480px) {
     .login-card {
         width: 100%;
@@ -420,54 +94,39 @@ input:-webkit-autofill:active {
         font-size: 22px;
         margin-bottom: 24px;
     }
-
-    /* Ajuste do tamanho e espaçamento dos inputs para preencher bem o espaço */
-    .input-group {
-        margin-bottom: 24px;
-    }
-
-    .form-input {
-        padding: 14px 12px 6px 40px;
-    }
-
-    /* Ajuste do botão para telas pequenas */
-    .login-button {
-        padding: 14px;
-    }
-
-    /* Ajuste do cabeçalho para telas pequenas */
-    .header {
-        padding: 16px;
-    }
-
-    .logo-container {
-        width: 140px;
-        height: 50px;
-    }
-
-    /* Ajuste do modal de mensagem para telas pequenas */
-    .mensagem-modal-container {
-        width: 100%;
-        max-width: 100%;
-        margin: 0 16px;
-        border-radius: 8px;
-    }
-}
-
-/* Media query para telas médias (tablets) */
-@media (min-width: 481px) and (max-width: 767px) {
-    .login-card {
-        width: 90%;
-        max-width: 480px;
-        padding: 24px;
-    }
-
-    .login-container {
-        padding: 16px;
-    }
 }
 
 /* Animação suave para transições de layout */
 .login-card {
     transition: width 0.3s ease, max-width 0.3s ease, border-radius 0.3s ease, box-shadow 0.3s ease, padding 0.3s ease;
+}
+
+/* Estilos para animação de autofill */
+@keyframes onAutoFillStart {
+    from { }
+    to { }
+}
+
+@keyframes onAutoFillCancel {
+    from { }
+    to { }
+}
+
+input:-webkit-autofill {
+    animation-name: onAutoFillStart;
+    transition: background-color 50000s ease-in-out 0s;
+}
+
+input:not(:-webkit-autofill) {
+    animation-name: onAutoFillCancel;
+}
+
+input:-webkit-autofill ~ .form-label {
+    top: 0 !important;
+    left: 12px !important;
+    font-size: 12px !important;
+    color: var(--azul-royal) !important;
+    font-weight: 500 !important;
+    background-color: #FFFFFF !important;
+    z-index: 3 !important;
 }

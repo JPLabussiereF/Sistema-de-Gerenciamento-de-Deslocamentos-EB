@@ -1,59 +1,9 @@
-/* Variáveis de Cor baseadas no login.css */
-:root {
-    --azul-royal: #0033A0;
-    --azul-claro: #3366CC;
-    --azul-escuro: #001F5B;
-    --branco: #FFFFFF;
-    --cinza-claro: #f2f2f2;
-    --cinza-medio: #E2E8F0;
-    --texto-primario: #172B4D;
-    --verde-sucesso: #10b981;
-    --verde-sucesso-escuro: #059669;
-    --vermelho-erro: #ef4444;
-    --vermelho-erro-escuro: #dc2626;
-}
+/* Importa os estilos comuns */
+@import url('common.css');
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
+/* Estilos específicos para o formulário de deslocamento */
 
-body {
-    background-color: var(--cinza-claro);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-/* Header estilizado como o login.css */
-.header {
-    background-color: var(--azul-royal);
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.logo-container {
-    width: 160px;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 8px;
-    padding: 10px;
-    overflow: hidden;
-}
-
-.logo-image {
-    max-width: 120%;
-    max-height: 120%;
-    object-fit: contain;
-}
-
-/* Título do formulário (novo) */
+/* Título do formulário */
 .form-title {
     color: var(--azul-escuro);
     font-size: 24px;
@@ -90,82 +40,9 @@ body {
     transform: translateY(-5px);
 }
 
-/* Grupos de input */
-.input-group {
-    position: relative;
-    margin-bottom: 28px;
-}
-
-/* Posicionamento do ícone à esquerda do campo */
-.input-icon {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--azul-claro);
-    z-index: 2;
-}
-
-.field-label {
-    position: absolute;
-    left: 40px; /* Posicionado após o ícone */
-    top: 50%;
-    transform: translateY(-50%);
-    color: #777;
-    transition: all 0.3s;
-    pointer-events: none;
-    font-size: 16px;
-    z-index: 1;
-    padding: 0 4px;
-    background-color: transparent;
-}
-
-#acaoTrajeto { 
+/* Ajustes específicos para o campo de ação do trajeto */
+#acaoTrajeto {
     font-size: 15px;
-}
-
-.form-input {
-    width: 100%;
-    padding: 16px 12px 8px 40px; /* Padding à esquerda para acomodar o ícone */
-    border: none;
-    font-size: 16px;
-    transition: all 0.3s;
-    background-color: transparent;
-    z-index: 1;
-    border-bottom: 1px solid #ddd;
-    border-radius: 0;
-}
-
-.form-input:focus {
-    outline: none;
-    border-color: transparent;
-}
-
-.form-border {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 1px;
-    width: 100%;
-    background-color: #ddd;
-}
-
-.form-input:focus ~ .form-border,
-.form-input:not(:placeholder-shown) ~ .form-border {
-    height: 2px;
-    background-color: var(--azul-royal);
-}
-
-.form-input:focus ~ .field-label,
-.form-input:not(:placeholder-shown) ~ .field-label,
-.field-label.active {
-    top: 0;
-    left: 12px;
-    font-size: 12px;
-    color: var(--azul-royal);
-    font-weight: 500;
-    background-color: var(--branco);
-    z-index: 3;
 }
 
 /* Estilização para o campo datetime-local */
@@ -181,8 +58,8 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
 
 /* Estilização para inputs numéricos */
 input[type="number"] {
-    appearance: textfield; /* Default for compatibility */
-    -moz-appearance: textfield; /* Firefox */
+    appearance: textfield;
+    -moz-appearance: textfield;
 }
 
 input[type="number"]::-webkit-outer-spin-button,
@@ -229,14 +106,13 @@ input[type="number"]::-webkit-inner-spin-button {
     font-weight: 500;
     color: var(--azul-royal);
     margin-bottom: 3px;
-    display: block; /* Garantir que todos os itens tenham a mesma estrutura */
+    display: block;
 }
 
-/* Adicione isso ao seu arquivo deslocamento.css */
 .dropdown-item-endereco {
     font-size: 0.85em;
     color: rgb(0 0 0);
-    white-space: normal; 
+    white-space: normal;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
@@ -246,10 +122,11 @@ input[type="number"]::-webkit-inner-spin-button {
     line-height: 1.4;
     font-style: italic;
 }
+
 .sem-cliente-info {
     font-size: 0.85em;
     color: rgb(0 0 0);
-    white-space: normal; 
+    white-space: normal;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
@@ -275,18 +152,18 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 .input-group.action-highlight .input-icon {
-    top: 20px; /* Mantém na mesma altura do topo */
-    transform: translateY(0); /* Remove transformação vertical */
-    left: 15px; /* Ajustando a posição horizontal */
+    top: 20px;
+    transform: translateY(0);
+    left: 15px;
 }
 
 .input-group.action-highlight .field-label {
     color: var(--azul-royal);
     font-weight: 500;
     font-size: 18px;
-    left: 45px; /* Posiciona à direita do ícone */
-    top: 20px; /* Mantém na mesma altura que o ícone */
-    transform: translateY(0); /* Remove transformação vertical */
+    left: 45px;
+    top: 20px;
+    transform: translateY(0);
     background-color: transparent;
 }
 
@@ -324,16 +201,16 @@ input[type="number"]::-webkit-inner-spin-button {
     height: 0;
 }
 
-.radio-option input[type="radio"]:checked + .radio-icon {
+.radio-option input[type="radio"]:checked+.radio-icon {
     color: var(--azul-royal);
 }
 
-.radio-option input[type="radio"]:checked + .radio-icon + span {
+.radio-option input[type="radio"]:checked+.radio-icon+span {
     color: var(--azul-royal);
     font-weight: 500;
 }
 
-.radio-option input[type="radio"]:checked ~ * {
+.radio-option input[type="radio"]:checked~* {
     color: var(--azul-royal);
 }
 
@@ -341,7 +218,7 @@ input[type="number"]::-webkit-inner-spin-button {
     border-color: var(--azul-royal);
 }
 
-.radio-option input[type="radio"]:checked ~ .radio-option {
+.radio-option input[type="radio"]:checked~.radio-option {
     background-color: rgba(0, 82, 204, 0.05);
     border-color: var(--azul-royal);
 }
@@ -364,333 +241,6 @@ input[type="number"]::-webkit-inner-spin-button {
     font-weight: 500;
 }
 
-/* Botão de enviar */
-.submit-button {
-    background-color: var(--azul-royal);
-    color: var(--branco);
-    border: none;
-    border-radius: 6px;
-    padding: 16px;
-    width: 100%;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 4px 8px rgba(0, 51, 160, 0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-top: 10px;
-}
-
-.submit-button:hover {
-    background-color: var(--azul-escuro);
-    box-shadow: 0 6px 12px rgba(0, 51, 160, 0.3);
-    transform: translateY(-2px);
-}
-
-.submit-button:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 51, 160, 0.2);
-}
-
-/* Media query para telas pequenas (celulares) */
-@media (max-width: 480px) {
-    .radio-option {
-        flex: 1 0 100%;
-    }
-    
-    .form-card {
-        width: 100%;
-        max-width: 100%;
-        border-radius: 0;
-        box-shadow: none;
-        padding: 20px 16px;
-        margin: 0;
-        min-height: 100vh; /* Garantir altura mínima para preencher a tela */
-    }
-    
-    .form-container {
-        padding: 0;
-        background-color: var(--branco);
-    }
-    
-    .input-group {
-        margin-bottom: 20px;
-    }
-    
-    .form-title {
-        font-size: 20px;
-        margin-bottom: 20px; 
-    }
-    
-    /* Ajuste do tamanho e espaçamento dos inputs para preencher bem o espaço */
-    .form-input {
-        padding: 14px 12px 6px 40px;
-    }
-
-    /* Ajuste do botão para telas pequenas */
-    .submit-button {
-        padding: 14px;
-    }
-
-    /* Ajuste do cabeçalho para telas pequenas */
-    .header {
-        padding: 16px;
-    }
-
-    .logo-container {
-        width: 140px;
-        height: 50px;
-    }
-    
-    /* Ajuste do espaço dos campos de Ação do Trajeto */
-    .input-group.action-highlight {
-        padding: 16px 12px;
-        border-radius: 6px;
-    }
-    
-    /* Ajuste do card de endereço */
-    .endereco-info-card {
-        padding: 12px;
-        margin-bottom: 20px;
-    }
-    
-    /* Ajuste do modal de mensagem para telas pequenas */
-    .mensagem-modal-container {
-        width: 100%;
-        max-width: 100%;
-        margin: 0 16px;
-        border-radius: 8px;
-    }
-}
-/* Media query para telas médias (tablets) */
-@media (min-width: 481px) and (max-width: 767px) {
-    .form-card {
-        width: 90%;
-        max-width: 520px;
-        padding: 24px;
-    }
-
-    .form-container {
-        padding: 16px;
-    }
-    
-    .radio-option {
-        flex: 1 0 calc(50% - 5px);
-    }
-}
-/* Media query para dispositivos móveis em orientação paisagem */
-@media (max-height: 500px) and (orientation: landscape) {
-    .form-container {
-        padding: 0;
-    }
-    
-    .form-card {
-        border-radius: 0;
-        box-shadow: none;
-        padding: 16px;
-        max-height: 100vh;
-        overflow-y: auto;
-    }
-    
-    .input-group {
-        margin-bottom: 16px;
-    }
-    
-    .form-title {
-        font-size: 18px;
-        margin-bottom: 16px;
-        padding-bottom: 10px;
-    }
-    
-    /* Compactar o layout para caber mais conteúdo na altura limitada */
-    .radio-option {
-        padding: 8px 10px;
-    }
-    
-    .endereco-info-card {
-        padding: 12px;
-        margin-bottom: 16px;
-    }
-}
-/* Modal de Mensagem */
-.mensagem-modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2000;
-    padding: 20px;
-}
-
-.mensagem-modal-container {
-    background-color: var(--branco);
-    border-radius: 12px;
-    width: 100%;
-    max-width: 400px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    overflow: hidden;
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
-    transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-.mensagem-modal-container.ativo {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-}
-
-.mensagem-modal-container.fechando {
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
-}
-
-.mensagem-modal-header {
-    display: flex;
-    align-items: center;
-    padding: 16px 20px;
-    border-bottom: 1px solid var(--cinza-medio);
-    position: relative;
-}
-
-.mensagem-sucesso .mensagem-modal-header {
-    background-color: rgba(16, 185, 129, 0.1);
-    color: var(--verde-sucesso);
-}
-
-.mensagem-erro .mensagem-modal-header {
-    background-color: rgba(239, 68, 68, 0.1);
-    color: var(--vermelho-erro);
-}
-
-.mensagem-modal-icone {
-    margin-right: 12px;
-    display: flex;
-    align-items: center;
-}
-
-.mensagem-sucesso .mensagem-modal-icone svg {
-    stroke: var(--verde-sucesso);
-}
-
-.mensagem-erro .mensagem-modal-icone svg {
-    stroke: var(--vermelho-erro);
-}
-
-.mensagem-modal-titulo {
-    font-size: 18px;
-    font-weight: 600;
-    flex-grow: 1;
-    margin: 0;
-}
-
-.mensagem-modal-fechar-x {
-    background: none;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px;
-    border-radius: 50%;
-    transition: background-color 0.2s;
-}
-
-.mensagem-sucesso .mensagem-modal-fechar-x svg {
-    stroke: #10b981;
-}
-
-.mensagem-erro .mensagem-modal-fechar-x svg {
-    stroke: #ef4444;
-}
-
-.mensagem-modal-fechar-x:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-}
-
-.mensagem-modal-body {
-    padding: 20px;
-    font-size: 16px;
-    color: var(--texto-primario);
-    line-height: 1.5;
-}
-
-.mensagem-modal-footer {
-    padding: 12px 20px 20px;
-    display: flex;
-    justify-content: center;
-}
-
-.mensagem-modal-btn-fechar {
-    background-color: var(--azul-royal);
-    color: var(--branco);
-    border: none;
-    border-radius: 6px;
-    padding: 10px 24px;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-}
-
-.mensagem-modal-btn-fechar:hover {
-    background-color: var(--azul-escuro);
-    transform: translateY(-2px);
-}
-
-.mensagem-modal-btn-fechar:active {
-    transform: translateY(0);
-}
-
-.mensagem-sucesso .mensagem-modal-btn-fechar {
-    background-color: #10b981;
-}
-
-.mensagem-sucesso .mensagem-modal-btn-fechar:hover {
-    background-color: #059669;
-}
-
-.mensagem-erro .mensagem-modal-btn-fechar {
-    background-color: #ef4444;
-}
-
-.mensagem-erro .mensagem-modal-btn-fechar:hover {
-    background-color: #dc2626;
-}
-
-/* Responsividade */
-@media (max-width: 600px) {
-    .form-card {
-        width: 95%;
-        max-width: 540px;
-    }
-
-    .mensagem-modal-container {
-        max-width: 320px;
-    }
-
-    .mensagem-modal-header {
-        padding: 12px 16px;
-    }
-
-    .mensagem-modal-body {
-        padding: 16px;
-        font-size: 15px;
-    }
-
-    .mensagem-modal-footer {
-        padding: 8px 16px 16px;
-    }
-}
 /* Estilização para o campo de endereço informativo */
 .endereco-info-card {
     background-color: #f8fafc;
@@ -735,7 +285,7 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 
 .endereco-content {
-    padding-left: 42px; /* Alinhado com o conteúdo após o ícone */
+    padding-left: 42px;
     font-size: 15px;
     line-height: 1.6;
     color: var(--texto-primario);
@@ -743,7 +293,6 @@ input[type="number"]::-webkit-inner-spin-button {
     position: relative;
 }
 
-/* Estilização para mostrar linhas de endereço em formato semelhante a cartão */
 .endereco-content::before {
     content: "";
     position: absolute;
@@ -755,40 +304,93 @@ input[type="number"]::-webkit-inner-spin-button {
     opacity: 0.8;
 }
 
-/* .contador-envios {
-    background-color: var(--azul-royal-claro, #E6F0FF);
-    color: var(--azul-royal, #0033A0);
-    padding: 8px 12px;
-    border-radius: 6px;
-    margin-bottom: 16px;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+/* Media queries */
+@media (max-width: 480px) {
+    .radio-option {
+        flex: 1 0 100%;
+    }
+
+    .form-card {
+        width: 100%;
+        max-width: 100%;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 20px 16px;
+        margin: 0;
+        min-height: 100vh;
+    }
+
+    .form-container {
+        padding: 0;
+        background-color: var(--branco);
+    }
+
+    .form-title {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+
+    /* Ajuste do espaço dos campos de Ação do Trajeto */
+    .input-group.action-highlight {
+        padding: 16px 12px;
+        border-radius: 6px;
+    }
+
+    /* Ajuste do card de endereço */
+    .endereco-info-card {
+        padding: 12px;
+        margin-bottom: 20px;
+    }
 }
 
-.contador-progresso {
-    height: 6px;
-    background-color: #e0e0e0;
-    border-radius: 3px;
-    width: 100%;
-    margin-top: 6px;
-    overflow: hidden;
+/* Media query para telas médias (tablets) */
+@media (min-width: 481px) and (max-width: 767px) {
+    .form-card {
+        width: 90%;
+        max-width: 520px;
+        padding: 24px;
+    }
+
+    .form-container {
+        padding: 16px;
+    }
+
+    .radio-option {
+        flex: 1 0 calc(50% - 5px);
+    }
 }
 
-.contador-barra {
-    height: 100%;
-    background-color: var(--azul-royal, #0033A0);
-    border-radius: 3px;
-    transition: width 0.3s ease;
-}
+/* Media query para dispositivos móveis em orientação paisagem */
+@media (max-height: 500px) and (orientation: landscape) {
+    .form-container {
+        padding: 0;
+    }
 
-.contador-alerta {
-    background-color: #FFF3CD;
-    color: #856404;
-}
+    .form-card {
+        border-radius: 0;
+        box-shadow: none;
+        padding: 16px;
+        max-height: 100vh;
+        overflow-y: auto;
+    }
 
-.contador-perigo {
-    background-color: #F8D7DA;
-    color: #721C24;
-} */
+    .input-group {
+        margin-bottom: 16px;
+    }
+
+    .form-title {
+        font-size: 18px;
+        margin-bottom: 16px;
+        padding-bottom: 10px;
+    }
+
+    /* Compactar o layout para caber mais conteúdo na altura limitada */
+    .radio-option {
+        padding: 8px 10px;
+    }
+
+    .endereco-info-card {
+        padding: 12px;
+        margin-bottom: 16px;
+    }
+}

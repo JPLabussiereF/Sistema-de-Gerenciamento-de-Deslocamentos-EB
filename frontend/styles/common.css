@@ -1,0 +1,378 @@
+/* Variáveis de Cor globais */
+:root {
+    --azul-royal: #0033A0;
+    --azul-claro: #3366CC;
+    --azul-escuro: #001F5B;
+    --branco: #FFFFFF;
+    --cinza-claro: #f2f2f2;
+    --cinza-medio: #E2E8F0;
+    --cinza-escuro: #718096;
+    --texto-primario: #172B4D;
+    --verde-sucesso: #10b981;
+    --verde-sucesso-escuro: #059669;
+    --vermelho-erro: #ef4444;
+    --vermelho-erro-escuro: #dc2626;
+    --amarelo-aviso: #f59e0b;
+    --amarelo-aviso-escuro: #d97706;
+    --roxo-destaque: #7e57c2;
+    --roxo-destaque-escuro: #5e35b1;
+}
+
+/* Reset e estilos base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--cinza-claro);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header estilizado */
+.header {
+    background-color: var(--azul-royal);
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo-container {
+    width: 160px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    padding: 10px;
+    overflow: hidden;
+}
+
+.logo-image {
+    max-width: 120%;
+    max-height: 120%;
+    object-fit: contain;
+}
+
+/* Footer estilizado */
+.footer {
+    background-color: var(--azul-escuro);
+    color: var(--branco);
+    text-align: center;
+    padding: 16px;
+    font-size: 14px;
+}
+
+/* Modal de Mensagem (comum a todas as páginas) */
+.mensagem-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    padding: 20px;
+}
+
+.mensagem-modal-container {
+    background-color: var(--branco);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.mensagem-modal-container.ativo {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.mensagem-modal-container.fechando {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+}
+
+.mensagem-modal-header {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--cinza-medio);
+    position: relative;
+}
+
+.mensagem-sucesso .mensagem-modal-header {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--verde-sucesso);
+}
+
+.mensagem-erro .mensagem-modal-header {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--vermelho-erro);
+}
+
+.mensagem-modal-icone {
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.mensagem-sucesso .mensagem-modal-icone svg {
+    stroke: var(--verde-sucesso);
+}
+
+.mensagem-erro .mensagem-modal-icone svg {
+    stroke: var(--vermelho-erro);
+}
+
+.mensagem-modal-titulo {
+    font-size: 18px;
+    font-weight: 600;
+    flex-grow: 1;
+    margin: 0;
+}
+
+.mensagem-modal-fechar-x {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.mensagem-sucesso .mensagem-modal-fechar-x svg {
+    stroke: var(--verde-sucesso);
+}
+
+.mensagem-erro .mensagem-modal-fechar-x svg {
+    stroke: var(--vermelho-erro);
+}
+
+.mensagem-modal-fechar-x:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.mensagem-modal-body {
+    padding: 20px;
+    font-size: 16px;
+    color: var(--texto-primario);
+    line-height: 1.5;
+}
+
+.mensagem-modal-footer {
+    padding: 12px 20px 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.mensagem-modal-btn-fechar {
+    background-color: var(--azul-royal);
+    color: var(--branco);
+    border: none;
+    border-radius: 6px;
+    padding: 10px 24px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.mensagem-modal-btn-fechar:hover {
+    background-color: var(--azul-escuro);
+    transform: translateY(-2px);
+}
+
+.mensagem-modal-btn-fechar:active {
+    transform: translateY(0);
+}
+
+.mensagem-sucesso .mensagem-modal-btn-fechar {
+    background-color: var(--verde-sucesso);
+}
+
+.mensagem-sucesso .mensagem-modal-btn-fechar:hover {
+    background-color: var(--verde-sucesso-escuro);
+}
+
+.mensagem-erro .mensagem-modal-btn-fechar {
+    background-color: var(--vermelho-erro);
+}
+
+.mensagem-erro .mensagem-modal-btn-fechar:hover {
+    background-color: var(--vermelho-erro-escuro);
+}
+
+/* Estilos para inputs com label flutuante (comuns em vários formulários) */
+.input-group {
+    position: relative;
+    margin-bottom: 28px;
+}
+
+.input-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--azul-claro);
+    z-index: 2;
+}
+
+.form-label, .field-label {
+    position: absolute;
+    left: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #777;
+    transition: all 0.3s;
+    pointer-events: none;
+    font-size: 16px;
+    z-index: 1;
+    padding: 0 4px;
+    background-color: transparent;
+}
+
+.form-input {
+    width: 100%;
+    padding: 16px 12px 8px 40px;
+    border: none;
+    font-size: 16px;
+    transition: all 0.3s;
+    background-color: transparent;
+    z-index: 1;
+    border-bottom: 1px solid #ddd;
+    border-radius: 0;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: transparent;
+}
+
+.form-border {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 1px;
+    width: 100%;
+    background-color: #ddd;
+}
+
+.form-input:focus ~ .form-border,
+.form-input:not(:placeholder-shown) ~ .form-border {
+    height: 2px;
+    background-color: var(--azul-royal);
+}
+
+.form-input:focus ~ .form-label,
+.form-input:not(:placeholder-shown) ~ .form-label,
+.form-input:focus ~ .field-label,
+.form-input:not(:placeholder-shown) ~ .field-label,
+.form-label.active,
+.field-label.active {
+    top: 0;
+    left: 12px;
+    font-size: 12px;
+    color: var(--azul-royal);
+    font-weight: 500;
+    background-color: var(--branco);
+    z-index: 3;
+}
+
+/* Botão padrão */
+.submit-button, .login-button {
+    background-color: var(--azul-royal);
+    color: var(--branco);
+    border: none;
+    border-radius: 6px;
+    padding: 16px;
+    width: 100%;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 4px 8px rgba(0, 51, 160, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.submit-button:hover, .login-button:hover {
+    background-color: var(--azul-escuro);
+    box-shadow: 0 6px 12px rgba(0, 51, 160, 0.3);
+    transform: translateY(-2px);
+}
+
+.submit-button:active, .login-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 51, 160, 0.2);
+}
+
+/* Responsividade */
+@media (max-width: 600px) {
+    .mensagem-modal-container {
+        max-width: 320px;
+    }
+
+    .mensagem-modal-header {
+        padding: 12px 16px;
+    }
+
+    .mensagem-modal-body {
+        padding: 16px;
+        font-size: 15px;
+    }
+
+    .mensagem-modal-footer {
+        padding: 8px 16px 16px;
+    }
+    
+    .header {
+        padding: 16px;
+    }
+
+    .logo-container {
+        width: 140px;
+        height: 50px;
+    }
+}
+
+/* Media query para telas pequenas (celulares) */
+@media (max-width: 480px) {
+    .input-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-input {
+        padding: 14px 12px 6px 40px;
+    }
+
+    /* Ajuste do botão para telas pequenas */
+    .submit-button, .login-button {
+        padding: 14px;
+    }
+    
+    /* Ajuste do modal de mensagem para telas pequenas */
+    .mensagem-modal-container {
+        width: 100%;
+        max-width: 100%;
+        margin: 0 16px;
+        border-radius: 8px;
+    }
+}

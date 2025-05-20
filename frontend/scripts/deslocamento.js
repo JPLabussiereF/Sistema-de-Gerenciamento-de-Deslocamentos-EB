@@ -421,6 +421,26 @@ function validarEEnviar() {
         mostrarMensagem('erro', 'Campo Obrigatório', 'Por favor, selecione uma Ação do Trajeto.');
         return;
     }
+    // Validação: Se Origem e Destino forem iguais
+    if (origem === destino) {
+        mostrarMensagem('erro', 'Dados Inconsistentes', 'Origem e Destino não podem ser iguais.');
+        document.getElementById('destino').focus();
+        return;
+    }
+
+    // Validação: Cliente vs. Ação do Trajeto
+    if (cliente !== 'Sem cliente' && acao !== 'Visita') {
+        mostrarMensagem('erro', 'Dados Inconsistentes', 'Quando o Cliente for diferente de "Sem cliente", a Ação do Trajeto deve ser "Visita".');
+        return;
+    }
+
+    // Validação: Destino vs. Cliente
+    if ((destino === 'Casa' || destino === 'Almoço' || destino.startsWith('Elétrica Bahiana')) && 
+        cliente !== 'Sem cliente') {
+        mostrarMensagem('erro', 'Dados Inconsistentes', 'Quando o Destino for Casa, Almoço ou Elétrica Bahiana, o Cliente deve ser "Sem cliente".');
+        document.getElementById('cliente').focus();
+        return;
+    }
     // Validar a relação entre cliente e destino
     if (cliente !== 'Sem cliente' && 
         destino !== cliente && 

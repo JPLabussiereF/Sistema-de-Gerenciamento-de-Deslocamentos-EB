@@ -79,7 +79,7 @@ backend/
 
 1. Inicie o XAMPP e certifique-se de que os serviços MySQL e Apache estão ativos
 2. Acesse o [phpMyAdmin](http://localhost/phpmyadmin) - http://localhost/phpmyadmin
-3. Crie um banco de dados chamado `eletrica_bahiana`
+3. Crie um banco de dados chamado `eletrica_bahiana` (lembre-se de ajustar também no arquivo 'db.js' caso opte por um nome diferente.)
 4. Utilize o script SQL abaixo para criar as tabelas necessárias
 
 ```sql

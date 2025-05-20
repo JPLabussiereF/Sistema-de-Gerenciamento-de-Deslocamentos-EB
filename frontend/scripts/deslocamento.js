@@ -176,112 +176,155 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-// Função para configurar autocomplete em um campo
-// Função modificada para configurar autocomplete em um campo
-function setupAutocomplete(fieldId, options) {
-    const inputField = document.getElementById(fieldId);
-    const dropdownList = document.getElementById(fieldId + 'Dropdown');
-    
-    // Atributo para armazenar as opções válidas
-    inputField.dataset.validOptions = JSON.stringify(options);
-    
-    // Função para mostrar as opções do dropdown
-    function showDropdown() {
-        // Limpar lista anterior
-        dropdownList.innerHTML = '';
+    // Função atualizada para configurar autocomplete em um campo
+    function setupAutocomplete(fieldId, options) {
+        const inputField = document.getElementById(fieldId);
+        const dropdownList = document.getElementById(fieldId + 'Dropdown');
         
-        // Filtrar opções baseadas no texto atual
-        const inputValue = inputField.value.toLowerCase();
-        const filteredOptions = options.filter(option => 
-            option.toLowerCase().includes(inputValue)
-        );
+        // Atributo para armazenar as opções válidas
+        inputField.dataset.validOptions = JSON.stringify(options);
         
-        // Criar e adicionar itens filtrados ao dropdown
-        filteredOptions.forEach(option => {
-            // Criar container para o item (para organizar nome e endereço)
-            const item = document.createElement('div');
-            item.className = 'dropdown-item';
+        // Função para mostrar as opções do dropdown
+        function showDropdown() {
+            // Limpar lista anterior
+            dropdownList.innerHTML = '';
             
-            // Obter o endereço completo (se disponível)
-            const enderecoCompleto = getEnderecoCompleto(option);
+            // Filtrar opções baseadas no texto atual
+            const inputValue = inputField.value.toLowerCase();
+            const filteredOptions = options.filter(option => 
+                option.toLowerCase().includes(inputValue)
+            );
             
-            // Sempre criar um span para o nome (garantindo formatação consistente)
-            const nomeSpan = document.createElement('span');
-            nomeSpan.className = 'dropdown-item-nome';
-            nomeSpan.textContent = option;
-            item.appendChild(nomeSpan);
-            
-            // Se tiver endereço, adicionar essa informação também
-            if (enderecoCompleto) {
-                // Criar span para o endereço (texto menor e cinza)
-                const enderecoSpan = document.createElement('span');
-                enderecoSpan.className = 'dropdown-item-endereco';
-                enderecoSpan.textContent = enderecoCompleto;
-                item.appendChild(enderecoSpan);
+            // Criar e adicionar itens filtrados ao dropdown
+            filteredOptions.forEach(option => {
+                // Criar container para o item (para organizar nome e endereço)
+                const item = document.createElement('div');
+                item.className = 'dropdown-item';
                 
-                // Adicionar título para mostrar o endereço completo em tooltip também
-                item.title = `${option}: ${enderecoCompleto}`;
-            } else if (option === 'Sem cliente') {
-                // Para "Sem cliente", adicionamos um texto explicativo como se fosse um endereço
-                const placeHolderSpan = document.createElement('span');
-                placeHolderSpan.className = 'dropdown-item-endereco';
-                placeHolderSpan.textContent = 'Opte por esta alternativa caso a realização da ação \'Visita\' não ocorra.';
-                placeHolderSpan.style.opacity = '0.7'; // Tornar visível mas sutil
-                item.appendChild(placeHolderSpan);
-            }
-            
-            item.addEventListener('click', function() {
-                inputField.value = option;
-                dropdownList.style.display = 'none';
+                // Obter o endereço completo (se disponível)
+                const enderecoCompleto = getEnderecoCompleto(option);
                 
-                // Ativar o efeito da label flutuante
-                activateFloatingLabel(inputField);
+                // Sempre criar um span para o nome (garantindo formatação consistente)
+                const nomeSpan = document.createElement('span');
+                nomeSpan.className = 'dropdown-item-nome';
+                nomeSpan.textContent = option;
+                item.appendChild(nomeSpan);
                 
-                // Disparar evento de mudança para acionar outros comportamentos
-                const event = new Event('change');
-                inputField.dispatchEvent(event);
+                // Se tiver endereço, adicionar essa informação também
+                if (enderecoCompleto) {
+                    // Criar span para o endereço (texto menor e cinza)
+                    const enderecoSpan = document.createElement('span');
+                    enderecoSpan.className = 'dropdown-item-endereco';
+                    enderecoSpan.textContent = enderecoCompleto;
+                    item.appendChild(enderecoSpan);
+                    
+                    // Adicionar título para mostrar o endereço completo em tooltip também
+                    item.title = `${option}: ${enderecoCompleto}`;
+                } else if (option === 'Sem cliente') {
+                    // Para "Sem cliente", adicionamos um texto explicativo como se fosse um endereço
+                    const placeHolderSpan = document.createElement('span');
+                    placeHolderSpan.className = 'dropdown-item-endereco';
+                    placeHolderSpan.textContent = 'Opte por esta alternativa caso a realização da ação \'Visita\' não ocorra.';
+                    placeHolderSpan.style.opacity = '0.7'; // Tornar visível mas sutil
+                    item.appendChild(placeHolderSpan);
+                }
+                
+                item.addEventListener('click', function() {
+                    inputField.value = option;
+                    dropdownList.style.display = 'none';
+                    
+                    // Ativar o efeito da label flutuante
+                    activateFloatingLabel(inputField);
+                    
+                    // Marcar explicitamente como uma seleção válida
+                    inputField.dataset.validSelection = 'true';
+                    
+                    // Disparar evento de mudança para acionar outros comportamentos
+                    const event = new Event('change');
+                    inputField.dispatchEvent(event);
+                });
+                
+                dropdownList.appendChild(item);
             });
             
-            dropdownList.appendChild(item);
+            // Mostrar dropdown apenas se houver opções
+            if (filteredOptions.length > 0) {
+                dropdownList.style.display = 'block';
+            } else {
+                dropdownList.style.display = 'none';
+            }
+        }
+        
+        // Mostrar todas as opções ao clicar no campo
+        inputField.addEventListener('click', function() {
+            showDropdown();
         });
         
-        // Mostrar dropdown apenas se houver opções
-        if (filteredOptions.length > 0) {
-            dropdownList.style.display = 'block';
-        } else {
-            dropdownList.style.display = 'none';
-        }
-    }
-    
-    // O restante da função permanece igual
-    // Mostrar todas as opções ao clicar no campo
-    inputField.addEventListener('click', function() {
-        showDropdown();
-    });
-    
-    // Filtrar opções ao digitar
-    inputField.addEventListener('input', function() {
-        showDropdown();
+        // Filtrar opções ao digitar
+        inputField.addEventListener('input', function() {
+            showDropdown();
+            
+            // Caso o valor não esteja na lista e o campo esteja vazio, zerar a label
+            if (this.value === '') {
+                resetLabel(this);
+            } else {
+                activateFloatingLabel(this);
+            }
+            
+            // Importante: Marcar como não sendo uma seleção válida ainda
+            // Isso é crucial - será marcado como válido apenas quando clicar em um item
+            delete this.dataset.validSelection;
+        });
         
-        // Caso o valor não esteja na lista e o campo esteja vazio, zerar a label
-        if (this.value === '') {
-            resetLabel(this);
-        } else {
-            activateFloatingLabel(this);
-        }
-    });
-    
+        // Ocultar dropdown quando clicar fora
+        document.addEventListener('click', function(e) {
+            if (e.target !== inputField && !dropdownList.contains(e.target)) {
+                dropdownList.style.display = 'none';
+                
+                // Verificar se o valor digitado está na lista de opções ou se uma seleção válida foi feita
+                const validOptions = JSON.parse(inputField.dataset.validOptions || '[]');
+                const isExactMatch = validOptions.some(opt => 
+                    opt.toLowerCase() === inputField.value.toLowerCase()
+                );
+                
+                // FIX: Se tiver uma seleção válida do dropdown, não limpe o campo
+                if (inputField.value && !isExactMatch && inputField.dataset.validSelection !== 'true') {
+                    // Se não estiver na lista e não for uma seleção válida
+                    inputField.value = '';
+                    resetLabel(inputField);
+                    
+                    if (inputField.value !== '') {
+                        mostrarMensagem('erro', 'Valor Inválido', 'Por favor, selecione uma opção da lista.');
+                    }
+                }
+            }
+        });
+        
+        // Adiciona o evento para detectar preenchimento
+        ['change', 'blur', 'focus'].forEach(event => {
+            inputField.addEventListener(event, function() {
+                if (this.value) {
+                    activateFloatingLabel(this);
+                } else {
+                    resetLabel(this);
+                }
+            });
+        });
+        
     // Ocultar dropdown quando clicar fora
     document.addEventListener('click', function(e) {
         if (e.target !== inputField && !dropdownList.contains(e.target)) {
             dropdownList.style.display = 'none';
             
-            // Verificar se o valor digitado está na lista de opções
+            // Verificar se o valor digitado está na lista de opções ou se uma seleção válida foi feita
             const validOptions = JSON.parse(inputField.dataset.validOptions || '[]');
+            const isExactMatch = validOptions.some(opt => 
+                opt.toLowerCase() === inputField.value.toLowerCase()
+            );
             
-            if (inputField.value && !validOptions.some(opt => opt.toLowerCase() === inputField.value.toLowerCase())) {
-                // Se não estiver na lista e for o campo cliente, também validar
-                // Não permitir valores não listados - maior restrição
+            // FIX: Se tiver uma seleção válida do dropdown, não limpe o campo
+            if (inputField.value && !isExactMatch && inputField.dataset.validSelection !== 'true') {
+                // Se não estiver na lista e não for uma seleção válida
                 inputField.value = '';
                 resetLabel(inputField);
                 
@@ -291,35 +334,7 @@ function setupAutocomplete(fieldId, options) {
             }
         }
     });
-    
-    // Adiciona o evento para detectar preenchimento
-    ['change', 'blur', 'focus'].forEach(event => {
-        inputField.addEventListener(event, function() {
-            if (this.value) {
-                activateFloatingLabel(this);
-            } else {
-                resetLabel(this);
-            }
-        });
-    });
-    
-    // Validar ao perder o foco
-    inputField.addEventListener('blur', function() {
-        if (this.value) {
-            // Verificar se o valor é válido
-            const validOptions = JSON.parse(this.dataset.validOptions || '[]');
-            const isValid = validOptions.some(
-                opt => opt.toLowerCase() === this.value.toLowerCase()
-            );
-            
-            if (!isValid) {
-                this.value = '';
-                resetLabel(this);
-                mostrarMensagem('erro', 'Valor Inválido', 'Por favor, selecione uma opção da lista.');
-            }
-        }
-    });
-}
+    }
 
 // Função para obter o endereço completo de um cliente ou local
 function getEnderecoCompleto(nome) {

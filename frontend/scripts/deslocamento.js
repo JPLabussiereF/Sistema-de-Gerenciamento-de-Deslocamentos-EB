@@ -67,59 +67,87 @@ document.addEventListener('DOMContentLoaded', function() {
     // Configurar eventos para os radio buttons de ação
     configureRadioButtons();
 });
-
-// Função para buscar opções de autocomplete da API
-async function fetchOpcoesAutocomplete() {
-    const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado')) || {};
-    const userId = usuarioLogado.id_usuario;
-    
-    if (!userId) return;
-    
-    try {
-        // Buscar clientes do usuário logado
-        const clientesResponse = await fetch(`http://localhost:3000/api/autocomplete/clientes?userId=${userId}`);
-        const clientesResult = await clientesResponse.json();
-        
-        if (clientesResult.clientes && Array.isArray(clientesResult.clientes)) {
-            clientesData = clientesResult.clientes;
-            
-            // Configurar autocomplete para cliente com dados do servidor
-            setupAutocomplete('cliente', [
-                'Sem cliente', 
-                ...clientesData.map(cliente => cliente.nome)
-            ]);
-        } else {
-            // Fallback para opções fixas se a API falhar
-            setupAutocomplete('cliente', clienteOptionsFixas);
+    // Adicionar evento para atualização automática do campo Destino
+    document.getElementById('cliente').addEventListener('change', function() {
+        if (this.value !== 'Sem cliente') {
+            // Se o cliente for alterado, o destino se torna igual ao cliente
+            document.getElementById('destino').value = this.value;
+            activateFloatingLabel(document.getElementById('destino'));
         }
-        
-        // Buscar locais (fixos + clientes)
-        const locaisResponse = await fetch(`http://localhost:3000/api/autocomplete/locais?userId=${userId}`);
-        const locaisResult = await locaisResponse.json();
-        
-        if (locaisResult.locais && Array.isArray(locaisResult.locais)) {
-            locaisData = locaisResult.locais;
+    });
+    // Adicionar evento para atualização automática da ação baseada no destino
+    document.getElementById('destino').addEventListener('change', function() {
+        // Se o destino for Casa, Almoço ou EB, selecionar a ação correspondente
+        if (this.value === 'Casa' || this.value === 'Almoço' || this.value === 'Elétrica Bahiana - EB') {
+            // Encontrar o radio button correspondente
+            let acaoValue = this.value;
+            if (this.value === 'Elétrica Bahiana - EB') acaoValue = 'EB';
             
-            // Extrair apenas os nomes para o autocomplete
-            const nomesDosLocais = locaisData.map(local => local.nome);
+            const radioButtons = document.getElementsByName('acao');
+            for (const radioButton of radioButtons) {
+                if (radioButton.value === acaoValue) {
+                    radioButton.checked = true;
+                    // Disparar evento change para atualizar visuais
+                    const event = new Event('change');
+                    radioButton.dispatchEvent(event);
+                    break;
+                }
+            }
+        }
+    });
+
+    // Função para buscar opções de autocomplete da API
+    async function fetchOpcoesAutocomplete() {
+        const usuarioLogado = JSON.parse(localStorage.getItem('usuarioLogado')) || {};
+        const userId = usuarioLogado.id_usuario;
+        
+        if (!userId) return;
+        
+        try {
+            // Buscar clientes do usuário logado
+            const clientesResponse = await fetch(`http://localhost:3000/api/autocomplete/clientes?userId=${userId}`);
+            const clientesResult = await clientesResponse.json();
             
-            // Configurar autocomplete para origem e destino com dados do servidor
-            setupAutocomplete('origem', nomesDosLocais);
-            setupAutocomplete('destino', nomesDosLocais);
-        } else {
-            // Fallback para opções fixas se a API falhar
+            if (clientesResult.clientes && Array.isArray(clientesResult.clientes)) {
+                clientesData = clientesResult.clientes;
+                
+                // Configurar autocomplete para cliente com dados do servidor
+                setupAutocomplete('cliente', [
+                    'Sem cliente', 
+                    ...clientesData.map(cliente => cliente.nome)
+                ]);
+            } else {
+                // Fallback para opções fixas se a API falhar
+                setupAutocomplete('cliente', clienteOptionsFixas);
+            }
+            
+            // Buscar locais (fixos + clientes)
+            const locaisResponse = await fetch(`http://localhost:3000/api/autocomplete/locais?userId=${userId}`);
+            const locaisResult = await locaisResponse.json();
+            
+            if (locaisResult.locais && Array.isArray(locaisResult.locais)) {
+                locaisData = locaisResult.locais;
+                
+                // Extrair apenas os nomes para o autocomplete
+                const nomesDosLocais = locaisData.map(local => local.nome);
+                
+                // Configurar autocomplete para origem e destino com dados do servidor
+                setupAutocomplete('origem', nomesDosLocais);
+                setupAutocomplete('destino', nomesDosLocais);
+            } else {
+                // Fallback para opções fixas se a API falhar
+                setupAutocomplete('origem', localOptionsFixas);
+                setupAutocomplete('destino', localOptionsFixas);
+            }
+        } catch (error) {
+            console.error('Erro ao buscar dados para autocomplete:', error);
+            
+            // Se houver erro na API, usar opções fixas
+            setupAutocomplete('cliente', clienteOptionsFixas);
             setupAutocomplete('origem', localOptionsFixas);
             setupAutocomplete('destino', localOptionsFixas);
         }
-    } catch (error) {
-        console.error('Erro ao buscar dados para autocomplete:', error);
-        
-        // Se houver erro na API, usar opções fixas
-        setupAutocomplete('cliente', clienteOptionsFixas);
-        setupAutocomplete('origem', localOptionsFixas);
-        setupAutocomplete('destino', localOptionsFixas);
     }
-}
 
 // Função para configurar autocomplete em um campo
 // Função modificada para configurar autocomplete em um campo
@@ -366,7 +394,24 @@ function validarEEnviar() {
         mostrarMensagem('erro', 'Campo Obrigatório', 'Por favor, selecione uma Ação do Trajeto.');
         return;
     }
-    
+    // Validar a relação entre cliente e destino
+    if (cliente !== 'Sem cliente' && 
+        destino !== cliente && 
+        destino !== 'Casa' && 
+        destino !== 'Almoço' && 
+        destino !== 'Elétrica Bahiana - EB') {
+        mostrarMensagem('erro', 'Dados Inconsistentes', 'O destino deve ser igual ao cliente selecionado, exceto quando for Casa, Almoço ou EB.');
+        document.getElementById('destino').focus();
+        return;
+    }
+
+    // Validar a relação entre destino e ação
+    if ((destino === 'Casa' && acao !== 'Casa') || 
+        (destino === 'Almoço' && acao !== 'Almoço') || 
+        (destino === 'Elétrica Bahiana - EB' && acao !== 'EB')) {
+        mostrarMensagem('erro', 'Dados Inconsistentes', 'Quando o destino for Casa, Almoço ou EB, a ação do trajeto deve corresponder ao destino.');
+        return;
+    }
     // Validação de valores numéricos para km
     const kmInicioNum = parseFloat(kmInicio);
     const kmFinalNum = parseFloat(kmFinal);

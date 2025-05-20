@@ -429,8 +429,8 @@ function validarEEnviar() {
     }
 
     // Validação: Cliente vs. Ação do Trajeto
-    if (cliente !== 'Sem cliente' && acao !== 'Visita') {
-        mostrarMensagem('erro', 'Dados Inconsistentes', 'Quando o Cliente for diferente de "Sem cliente", a Ação do Trajeto deve ser "Visita".');
+    if (cliente !== 'Sem cliente' && acao !== 'Visita') {   
+        mostrarMensagem('erro', 'Dados Inconsistentes', 'A ação do trajeto deve ser "Visita", pois você estará indo até um cliente.');
         return;
     }
 

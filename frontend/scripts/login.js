@@ -221,20 +221,18 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Função para fechar o modal de mensagem (se existir)
+    // Função para fechar o modal de mensagem
     window.fecharModal = function() {
         const modal = document.getElementById('mensagemModal');
         if (modal) {
             const container = modal.querySelector('.mensagem-modal-container');
             
-            // Adicionar classe 'fechando' para animar a saída
+            // Remover classe 'ativo' para animar a saída
             container.classList.remove('ativo');
-            container.classList.add('fechando');
             
             // Esperar a animação terminar antes de esconder o modal
             setTimeout(() => {
                 modal.style.display = 'none';
-                container.classList.remove('fechando');
             }, 300);
         }
     };

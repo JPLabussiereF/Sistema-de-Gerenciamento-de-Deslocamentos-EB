@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Clientes - Elétrica Bahiana</title>
+    <link rel="stylesheet" href="../styles/gerenciamento-clientes.css">
+    <link rel="shortcut icon" href="../images/logotipo_eb_branco.svg" type="image/png">
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo-container">
+            <img src="../images/logo.png" alt="EB" class="logo-image">
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="content-card">
+            <h2 class="content-title">Gerenciamento de Clientes</h2>
+            
+            <!-- Campo de pesquisa -->
+            <div class="search-container">
+                <div class="search-input-group">
+                    <div class="search-input-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </div>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Buscar por código, nome do cliente ou vendedor...">
+                </div>
+            </div>
+            
+            <!-- Tabela de clientes -->
+            <div class="table-container">
+                <table class="clients-table">
+                    <thead>
+                        <tr>
+                            <th class="action-column">Editar</th>
+                            <th>Cód. Cliente</th>
+                            <th>Nome do Cliente</th>
+                            <th>Vendedor Externo Responsável</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientsTableBody">
+                        <!-- Os dados serão inseridos aqui dinamicamente -->
+                        <tr>
+                            <td colspan="4" class="loading-data">Carregando dados...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Indicador de carregamento -->
+            <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+                <div class="spinner"></div>
+                <span>Carregando...</span>
+            </div>
+            
+            <!-- Paginação -->
+            <div class="pagination-container" id="paginationContainer">
+                <!-- Paginação será adicionada dinamicamente -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para edição de vendedor -->
+    <div id="editModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3>Alterar Vendedor Responsável</h3>
+                <button class="modal-close-button" id="closeModalBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="cliente-info">
+                    <p><strong>Código:</strong> <span id="modalClienteCodigo"></span></p>
+                    <p><strong>Cliente:</strong> <span id="modalClienteNome"></span></p>
+                </div>
+                <div class="input-group">
+                    <label for="vendedorSelect">Selecione o Vendedor:</label>
+                    <select id="vendedorSelect" class="select-input">
+                        <!-- Opções de vendedores serão carregadas dinamicamente -->
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="cancel-button" id="cancelEditBtn">Cancelar</button>
+                <button class="save-button" id="saveEditBtn">Salvar Alterações</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de mensagem -->
+    <div id="mensagemModal" class="mensagem-modal-overlay" style="display: none;">
+        <div class="mensagem-modal-container">
+            <div class="mensagem-modal-header">
+                <div class="mensagem-modal-icone">
+                    <!-- O ícone será adicionado dinamicamente via JS -->
+                </div>
+                <h3 class="mensagem-modal-titulo"><!-- Título será adicionado dinamicamente --></h3>
+                <button class="mensagem-modal-fechar-x" onclick="fecharMensagemModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="mensagem-modal-body">
+                <!-- Conteúdo será adicionado dinamicamente -->
+            </div>
+            <div class="mensagem-modal-footer">
+                <button class="mensagem-modal-btn-fechar" onclick="fecharMensagemModal()">Fechar</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="../scripts/gerenciamento-clientes.js"></script>
+</body>
+</html>

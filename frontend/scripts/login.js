@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function () {
             setTimeout(() => {
                 // Redirecionar de acordo com a função do usuário
                 if (data.funcao === 'adm') {
-                    window.location.href = 'cadastro-cliente.html';
+                    window.location.href = 'gerenciamento-clientes.html';
                 } else if (data.funcao === 'vendedor') {
                     window.location.href = 'deslocamento.html';
                 } else {
